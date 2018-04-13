@@ -4,13 +4,15 @@ import daos.UserDao;
 import models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import services.UserService;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class UserServiceImp implements UserService {
-
+    @Autowired
     private UserDao userDao;
 
     @Autowired
@@ -19,32 +21,48 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User get(String userName) {
-        return userDao.get(userName);
+    @Transactional
+    public User get(String name) {
+        return userDao.get(name);
     }
 
     @Override
-    public Set<User> search(String searchString) {
+    @Transactional
+    public User getUserById(int id) {
+        return userDao.getUserById(id);
+    }
+
+    @Override
+    @Transactional
+    public List<User> search(String searchString) {
         return userDao.search(searchString);
     }
 
     @Override
-    public Set<User> getAll() {
+    @Transactional
+    public List<User> getAll() {
         return userDao.getAll();
     }
 
     @Override
+    @Transactional
     public void add(User newUser) {
         userDao.add(newUser);
     }
 
     @Override
+    @Transactional
     public void update(User modifiedUser) {
         userDao.update(modifiedUser);
     }
 
     @Override
-    public void delete(String userName) {
-        userDao.delete(userName);
+    @Transactional
+    public void delete(int id) {
+        userDao.delete(id);
+    }
+
+    public boolean isUserExist(User user) {
+        return get(user.getName())!=null;
     }
 }
