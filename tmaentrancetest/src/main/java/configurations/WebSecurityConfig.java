@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpMethod;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,8 +20,9 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
-    private DataSource dataSource= new DataSourceConfig().dataSource();
+    private HibernateTransactionManager manager;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
@@ -31,6 +33,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/delete/*").permitAll()
                 .antMatchers(HttpMethod.PUT, "/update/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/add").permitAll()
+                .antMatchers(HttpMethod.GET, "/getallcategories").permitAll()
+                .antMatchers(HttpMethod.GET, "/getcategorybyid/*").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/deletecategory/*").permitAll()
+                .antMatchers(HttpMethod.PUT, "/updatecategory/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/addcategory").permitAll()
+                .antMatchers(HttpMethod.GET, "/getallquestiontypes").permitAll()
+                .antMatchers(HttpMethod.GET, "/getquestiontypebyid/*").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/deletequestiontype/*").permitAll()
+                .antMatchers(HttpMethod.PUT, "/updatequestiontype/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/addquestiontype").permitAll()
+                .antMatchers(HttpMethod.GET, "/getallquestions").permitAll()
+                .antMatchers(HttpMethod.GET, "/getquestionbyid/*").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/deletequestion/*").permitAll()
+                .antMatchers(HttpMethod.PUT, "/updatequestion/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/addquestion").permitAll()
+                .antMatchers(HttpMethod.GET, "/getallanswers").permitAll()
+                .antMatchers(HttpMethod.GET, "/getanswerbyid/*").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/deleteanswer/*").permitAll()
+                .antMatchers(HttpMethod.PUT, "/updateanswer/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/addanswer").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
@@ -40,7 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-             auth.jdbcAuthentication().dataSource(dataSource)
+             auth.jdbcAuthentication().dataSource(this.manager.getDataSource())
                .usersByUsernameQuery("select username,password,true as enabled from user where username=?")
                .authoritiesByUsernameQuery("select username, role from user where username=?");
 

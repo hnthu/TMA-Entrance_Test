@@ -27,8 +27,8 @@ public class UserDaoImp implements UserDao {
     public User get(String userName) {
         return this.manager.getSessionFactory().getCurrentSession().get(User.class, userName);
     }
-    public User getUserById(int userName) {
-        return this.manager.getSessionFactory().getCurrentSession().get(User.class, userName);
+    public User getUserById(int id) {
+        return this.manager.getSessionFactory().getCurrentSession().get(User.class, id);
     }
     @Override
     public List<User> search(String searchString) {

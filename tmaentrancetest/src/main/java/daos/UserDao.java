@@ -3,7 +3,6 @@ package daos;
 import models.User;
 
 import java.util.List;
-import java.util.Set;
 
 public interface UserDao {
     public User get(String userName);

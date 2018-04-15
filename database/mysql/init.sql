@@ -30,11 +30,12 @@ USE `productDatabase`;
 -- Table structure for table `user`
 --
 
-CREATE TABLE `user` (
-  `id` int(64) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` int(64) NOT NULL auto_increment,
   `username` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `role` varchar(64) COLLATE utf8_unicode_ci NOT NULL
+  `role` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`,`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -44,17 +45,77 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
 (1, 'admin', 'admin', 'ROLE_ADMIN');
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`,`username`);
-COMMIT;
-
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+--
+-- Table structure for table `Category`
+--
+
+CREATE TABLE IF NOT EXISTS `category` (
+  `id` int(64) NOT NULL AUTO_INCREMENT,
+  `categoryname` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `category` (`id`, `categoryname`) VALUES
+(1, 'Java');
+
+  
+  
+--
+-- Table structure for table `Question type`
+--
+
+
+CREATE TABLE IF NOT EXISTS `questionType` (
+  `id` int(64) NOT NULL AUTO_INCREMENT,
+  `typename` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `questionType` (`id`, `typename`) VALUES
+(1, 'YesNo');
+  
+--
+-- Table structure for table `Question`
+--
+  
+CREATE TABLE `question` (
+  `id` int(64) NOT NULL AUTO_INCREMENT,
+  `categoryid` int(64) NOT NULL,
+  `questiontypeid` int(64) NOT NULL,
+  `question` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `correctanswer` int(64) NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT  fk_category FOREIGN KEY (categoryid) REFERENCES category(id),
+  CONSTRAINT  fk_questionType FOREIGN KEY (questiontypeid) REFERENCES questionType(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+--
+-- Table structure for table `Answer`
+--
+CREATE TABLE `answer` (
+  `id` int(64) NOT NULL AUTO_INCREMENT,
+  `questionid` int(64) NOT NULL,
+  `answer1` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `answer2` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `answer3` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `answer4` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT  fk_question FOREIGN KEY (questionid) REFERENCES question(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+COMMIT;
