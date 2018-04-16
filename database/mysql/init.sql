@@ -73,7 +73,6 @@ INSERT INTO `category` (`id`, `categoryname`) VALUES
 -- Table structure for table `Question type`
 --
 
-
 CREATE TABLE IF NOT EXISTS `questionType` (
   `id` int(64) NOT NULL AUTO_INCREMENT,
   `typename` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
