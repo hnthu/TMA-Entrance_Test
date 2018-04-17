@@ -94,14 +94,15 @@ CREATE TABLE `question` (
   `id` int(64) NOT NULL AUTO_INCREMENT,
   `categoryid` int(64) NOT NULL,
   `questiontypeid` int(64) NOT NULL,
-  `question` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `questiontext` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   `correctanswer` int(64) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT  fk_category FOREIGN KEY (categoryid) REFERENCES category(id),
   CONSTRAINT  fk_questionType FOREIGN KEY (questiontypeid) REFERENCES questionType(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-
+-- INSERT INTO `question` (`id`, `categoryid` , `questiontypeid`, `questiontext`, `correctanswer`) VALUES
+-- (1, 1, 1, "Một câu hỏi", 1 );
 --
 -- Table structure for table `Answer`
 --
@@ -116,5 +117,6 @@ CREATE TABLE `answer` (
   CONSTRAINT  fk_question FOREIGN KEY (questionid) REFERENCES question(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-
+-- INSERT INTO `answer` (`id`, `questionid` , `answer1`, `answer2`, `answer3`, `answer4`) VALUES
+-- (1, 1, "111111", "Một câu hỏi", "", "" );
 COMMIT;

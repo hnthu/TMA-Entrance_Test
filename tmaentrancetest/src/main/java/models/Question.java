@@ -10,20 +10,31 @@ public class Question {
     @Column(name = "id", nullable = false)
     private int id;
     @Column(name = "categoryid", nullable = false)
+    private int questiontypeid;
+    @Column(name = "questiontypeid", nullable = false)
     private int categoryid;
-    @Column(name = "questiontest", nullable = false)
-    private String questiontest;
+    @Column(name = "questiontext", nullable = false)
+    private String questiontext;
     @Column(name = "correctanswer", nullable = false)
     private int correctanswer;
 
-    public Question(int id, int categoryid, String questiontest, int correctanswer) {
+    public Question(int id, int categoryid, int questiontypeid, String questiontext, int correctanswer) {
         this.id = id;
+        this.questiontypeid = questiontypeid;
         this.categoryid = categoryid;
-        this.questiontest = questiontest;
+        this.questiontext = questiontext;
         this.correctanswer = correctanswer;
     }
 
     public Question() {
+    }
+
+    public int getQuestiontypeid() {
+        return questiontypeid;
+    }
+
+    public void setQuestiontypeid(int questiontypeid) {
+        this.questiontypeid = questiontypeid;
     }
 
     public int getId() {
@@ -42,12 +53,12 @@ public class Question {
         this.categoryid = categoryid;
     }
 
-    public String getQuestiontest() {
-        return questiontest;
+    public String getQuestiontext() {
+        return questiontext;
     }
 
-    public void setQuestiontest(String questiontest) {
-        this.questiontest = questiontest;
+    public void setQuestiontext(String questiontext) {
+        this.questiontext = questiontext;
     }
 
     public int getCorrectanswer() {
@@ -62,8 +73,9 @@ public class Question {
     public String toString() {
         return "Question{" +
                 "id=" + id +
+                ", questiontypeid=" + questiontypeid +
                 ", categoryid=" + categoryid +
-                ", questiontest='" + questiontest + '\'' +
+                ", questiontext='" + questiontext + '\'' +
                 ", correctanswer=" + correctanswer +
                 '}';
     }

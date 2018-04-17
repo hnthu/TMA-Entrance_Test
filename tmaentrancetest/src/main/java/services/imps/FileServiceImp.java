@@ -1,6 +1,8 @@
 package services.imps;
 
 import daos.FileDao;
+import models.Answer;
+import models.Question;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,4 +35,17 @@ public class FileServiceImp implements FileService {
         }
         return new String[0][];
     }
+
+    @Override
+    @Transactional
+    public Question convertToQuestion(int id, String CategoryId, String QuestionTypeId, String QuestionText, String CorrectAnswer){
+        return this.fileDao.convertToQuestion(id, CategoryId, QuestionTypeId, QuestionText, CorrectAnswer);
+    }
+
+    @Override
+    @Transactional
+    public Answer convertToAnswer(int id, int QuestionId, String Answer1, String Answer2, String Answer3, String Answer4){
+        return this.fileDao.convertToAnswer(id, QuestionId, Answer1, Answer2, Answer3, Answer4);
+    }
+
 }

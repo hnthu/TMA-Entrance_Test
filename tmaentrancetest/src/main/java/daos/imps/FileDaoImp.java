@@ -1,6 +1,8 @@
 package daos.imps;
 
 import daos.FileDao;
+import models.Answer;
+import models.Question;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Repository;
@@ -57,5 +59,28 @@ public class FileDaoImp implements FileDao {
         }
        ;
         return new String[0][];
+    }
+
+    @Override
+    public Question convertToQuestion(int id, String CategoryId,  String QuestionTypeId, String QuestionText, String CorrectAnswer){
+        Question q = new Question();
+        q.setId(id);
+        q.setCategoryid(Integer.parseInt(CategoryId));
+        q.setQuestiontypeid(Integer.parseInt(QuestionTypeId));
+        q.setQuestiontext(QuestionText);
+        q.setCorrectanswer(Integer.parseInt(CorrectAnswer));
+        return q;
+    }
+
+    @Override
+    public Answer convertToAnswer(int id, int QuestionId, String Answer1, String Answer2, String Answer3, String Answer4){
+        Answer a = new Answer();
+        a.setId(id);
+        a.setQuestionid(QuestionId);
+        a.setAnswer1(Answer1);
+        a.setAnswer2(Answer2);
+        a.setAnswer3(Answer3);
+        a.setAnswer4(Answer4);
+        return a;
     }
 }
