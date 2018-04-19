@@ -2,61 +2,71 @@ package daos.imps;
 
 import daos.UserDao;
 import models.User;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.List;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.LoggerFactory;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.util.HashSet;
-import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.stereotype.Repository;
+
+import javax.transaction.Transactional;
 
 @Repository
 @Transactional
 public class UserDaoImp implements UserDao {
 
+    private static final org.slf4j.Logger logger =  LoggerFactory.getLogger(UserDaoImp.class);
     private SessionFactory sessionFactory;
 
     @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    private HibernateTransactionManager manager;
 
     @Override
     public User get(String userName) {
-        return sessionFactory.getCurrentSession().get(User.class, userName);
+        return this.manager.getSessionFactory().getCurrentSession().get(User.class, userName);
     }
-
+    public User getUserById(int userName) {
+        return this.manager.getSessionFactory().getCurrentSession().get(User.class, userName);
+    }
     @Override
-    public Set<User> search(String searchString) {
+    public List<User> search(String searchString) {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Set<User> getAll() {
-        CriteriaBuilder builder =  sessionFactory.getCurrentSession().getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> variableRoot = query.from(User.class);
-        query.select(variableRoot);
-        return new HashSet<>(sessionFactory.getCurrentSession().createQuery(query).getResultList());
+    public List<User> getAll() {
+        Session session = this.manager.getSessionFactory().getCurrentSession();
+        List<User> userList = session.createQuery("from User").list();
+        for(User p : userList){
+            logger.info("User List:"+p);
+        }
+        return userList;
     }
 
     @Override
     public void add(User newUser) {
-
+        Session session = this.manager.getSessionFactory().getCurrentSession();
+        session.save(newUser);
+        logger.info("User saved successfully, User Details="+newUser);
     }
 
     @Override
     public void update(User modifiedUser) {
-
+        Session session = this.manager.getSessionFactory().getCurrentSession();
+        session.update(modifiedUser);
+        logger.info("User updated successfully, User Details="+modifiedUser);
     }
 
     @Override
-    public void delete(String userName) {
-
+    public void delete(int id) {
+        Session session = this.manager.getSessionFactory().getCurrentSession();
+        User p = (User) session.get(User.class, id);
+        if(null != p){
+            session.delete(p);
+        }
+        logger.info("User deleted successfully, User details="+p);
     }
 }

@@ -31,7 +31,7 @@ USE `productDatabase`;
 --
 
 CREATE TABLE `user` (
-  `id` int(64) NOT NULL,
+  `id` int(64) NOT NULL AUTO_INCREMENT,
   `username` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `role` varchar(64) COLLATE utf8_unicode_ci NOT NULL
