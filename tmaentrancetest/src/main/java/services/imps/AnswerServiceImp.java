@@ -11,7 +11,6 @@ import java.util.List;
 
 @Service
 public class AnswerServiceImp implements AnswerService{
-    @Autowired
     private AnswerDao answerDao;
 
     @Autowired

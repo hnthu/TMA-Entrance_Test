@@ -9,5 +9,6 @@ import java.io.IOException;
 public interface FileService {
     public String[][] importData(MultipartFile file) throws IOException, InvalidFormatException;
     public Question convertToQuestion(int id, String CategoryId, String QuestionTypeId, String QuestionText, String CorrectAnswer);
-    public Answer convertToAnswer(int id, int  QuestionId, String Answer1, String Answer2, String Answer3, String Answer4);
+    public Answer convertToAnswer(int id, int  QuestionId, String Answer);
+    public void exportPDF(String technical);
 }

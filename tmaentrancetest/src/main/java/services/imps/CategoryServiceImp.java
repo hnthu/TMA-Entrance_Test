@@ -9,7 +9,6 @@ import java.util.List;
 
 @Service
 public class CategoryServiceImp implements CategoryService{
-    @Autowired
     private CategoryDao categoryDao;
 
     @Autowired
