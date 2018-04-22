@@ -53,7 +53,7 @@ public class FileController {
         }
         String [][] data = this.fileService.importData(uploadfile);
         for(int i = 1; i < data.length; i++){
-            Question q = this.fileService.convertToQuestion(i , data[i][4], data[i][5], data[i][1], data[i][3]);
+            Question q = this.fileService.convertToQuestion(i , data[i][5], data[i][6], data[i][1], data[i][3], data[i][4]);
             this.questionService.add(q);
             Answer a = this.fileService.convertToAnswer(i , i , data[i][2]);
             this.answerService.add(a);

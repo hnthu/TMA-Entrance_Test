@@ -65,6 +65,4 @@ dependencies {
     compile "org.apache.poi:poi-ooxml:3.17"
     compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.12'
     compile group: 'com.itextpdf', name: 'layout', version: '7.0.0'
-    compile group: 'com.itextpdf', name: 'layout', version: '7.0.0'
-
 }

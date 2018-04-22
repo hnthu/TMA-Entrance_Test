@@ -96,6 +96,7 @@ CREATE TABLE `question` (
   `questiontypeid` int(64) NOT NULL,
   `questiontext` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   `correctanswer` int(64) NOT NULL,
+  `level` int(64) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT  fk_category FOREIGN KEY (categoryid) REFERENCES category(id),
   CONSTRAINT  fk_questionType FOREIGN KEY (questiontypeid) REFERENCES questionType(id)

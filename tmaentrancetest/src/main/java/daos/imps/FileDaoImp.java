@@ -23,13 +23,13 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class FileDaoImp implements FileDao {
 
     private static String FILE = "C:\\temp\\a.pdf";
-    private static final String FONT = "D:\\Project\\TMA-Entrance_Test\\tmaentrancetest\\src\\main\\resources\\fonts\\times.ttf";
+    private static final String FONT = "C:\\Users\\450 G1\\Desktop\\TMA-Entrance_Test\\tmaentrancetest\\src\\main\\resources\\fonts\\times.ttf";
 
 
     public static final String[][] DATA = {
-            {"Name:.............................................................................", "Date (dd-mm-yyyy):......................"},
-            {"Email:............................................................................", "Start time:..............................."},
-            {"Phone:...........................................................................", "End time:..............................."}
+            {"Name:.............................................................................", "Date (dd-mm-yyyy):....................................."},
+            {"Email:.............................................................................", "Start time:....................................................."},
+            {"Phone:.............................................................................", "End time:......................................................"}
     };
 
     public FileDaoImp() throws IOException, DocumentException {
@@ -82,13 +82,14 @@ public class FileDaoImp implements FileDao {
     }
 
     @Override
-    public Question convertToQuestion(int id, String CategoryId,  String QuestionTypeId, String QuestionText, String CorrectAnswer){
+    public Question convertToQuestion(int id, String CategoryId,  String QuestionTypeId, String QuestionText, String CorrectAnswer,String Level){
         Question q = new Question();
         q.setId(id);
         q.setCategoryid(Integer.parseInt(CategoryId));
         q.setQuestiontypeid(Integer.parseInt(QuestionTypeId));
         q.setQuestiontext(QuestionText);
         q.setCorrectanswer(Integer.parseInt(CorrectAnswer));
+        q.setLevel(Integer.parseInt(Level));
         return q;
     }
 
@@ -140,7 +141,7 @@ public class FileDaoImp implements FileDao {
         addEmptyLine(title, 1);
         // Lets write a big header
         title.setAlignment(Element.ALIGN_RIGHT);
-        title.add(new Paragraph(technical + "Technical Test", catFont));
+        title.add(new Paragraph(technical + " Technical Test", catFont));
         document.add(title);
 
         //Lets write profile information
@@ -151,34 +152,34 @@ public class FileDaoImp implements FileDao {
         preface.add(createParagraphWithTab( DATA[2][0], DATA[2][1]));
 
         preface.add(new Paragraph(
-                "University:......................................................................................................................................................",
+                "University:..................................................................................................................................................................",
                 normalFont));
         preface.add(new Paragraph(
-                "Faculty (Khoa):...........................................................................................................................................",
+                "Faculty (Khoa):..........................................................................................................................................................",
                 normalFont));
         preface.add(new Paragraph(
-                "Major (Chuyên ngành):...................................................................................................................................",
+                "Major (Chuyên ngành):..............................................................................................................................................",
                 normalFont));
         preface.add(new Paragraph(
-                "GPA (Điểm trung bình tích lũy):.............................................................................................................................",
+                "GPA (Điểm trung bình tích lũy):...............................................................................................................................",
                 normalFont));
         preface.add(new Paragraph(
-                "Undergraduate thesis (Đề tài luận văn tốt nghiệp nếu có):.................................................................",
+                "Undergraduate thesis (Đề tài luận văn tốt nghiệp nếu có):........................................................................................",
                 normalFont));
         preface.add(new Paragraph(
-                "Time of graduation (mm-yyyy, thời điểm hoàn thành khóa học):....................................................",
+                "Time of graduation (mm-yyyy, thời điểm hoàn thành khóa học):.............................................................................",
                 normalFont));
         preface.add(new Paragraph(
-                "When are you available to start working (dd-mm-yyyy):...............................................................................",
+                "When are you available to start working (dd-mm-yyyy):..........................................................................................",
                 normalFont));
         preface.add(new Paragraph(
-                "Your expected Salary (Mức lương mong muốn):........................................................",
+                "Your expected Salary (Mức lương mong muốn):......................................................................................................",
                 normalFont));
         preface.add(new Paragraph(
-                "TOIEC score (if available):.............................................................................................................................",
+                "TOIEC score (if available):.......................................................................................................................................",
                 normalFont));
         preface.add(new Paragraph(
-                "Other certificates you have (CCNA, CCNP etc):.........................................................................................",
+                "Other certificates you have (CCNA, CCNP etc):......................................................................................................",
                 normalFont));
         document.add(preface);
     }

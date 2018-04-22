@@ -37,8 +37,8 @@ public class FileServiceImp implements FileService {
 
     @Override
     @Transactional
-    public Question convertToQuestion(int id, String CategoryId, String QuestionTypeId, String QuestionText, String CorrectAnswer){
-        return this.fileDao.convertToQuestion(id, CategoryId, QuestionTypeId, QuestionText, CorrectAnswer);
+    public Question convertToQuestion(int id, String CategoryId, String QuestionTypeId, String QuestionText, String CorrectAnswer, String Level){
+        return this.fileDao.convertToQuestion(id, CategoryId, QuestionTypeId, QuestionText, CorrectAnswer, Level);
     }
 
     @Override
