@@ -27,8 +27,6 @@ public class FileController {
     private FileService fileService;
     private QuestionService questionService;
     private AnswerService answerService;
-    //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = "C://temp//";
 
     @Autowired
     public void setFileService(FileService fileService) {

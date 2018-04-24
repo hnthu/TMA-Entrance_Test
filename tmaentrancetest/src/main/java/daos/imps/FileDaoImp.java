@@ -15,16 +15,15 @@ import javax.transaction.Transactional;
 import java.io.*;
 
 import java.io.FileOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.itextpdf.text.pdf.PdfWriter;
 
 @Repository
 @Transactional
 public class FileDaoImp implements FileDao {
-
-    private static String FILE = "C:\\temp\\a.pdf";
-    private static final String FONT = "C:\\Users\\450 G1\\Desktop\\TMA-Entrance_Test\\tmaentrancetest\\src\\main\\resources\\fonts\\times.ttf";
-
+    private static final String FONT = "/fonts/times.ttf";
 
     public static final String[][] DATA = {
             {"Name:.............................................................................", "Date (dd-mm-yyyy):....................................."},
@@ -105,7 +104,12 @@ public class FileDaoImp implements FileDao {
     @Override
     public void exportPDF(String technical){
         try {
-            File file = new File(FILE);
+            String FILE = "src/main/resources";
+            File filePDF = new File(FILE);
+            String temp = "temp/a.pdf";
+            Path path = filePDF.toPath();
+            path = Paths.get(path.toString(), temp);
+            File file = new File(path.toString());
             file.getParentFile().mkdirs();
             Document document = new Document(PageSize.A4,30, 25, 28, 27);
             PdfWriter.getInstance(document, new FileOutputStream(file));
