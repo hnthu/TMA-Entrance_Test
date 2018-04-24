@@ -8,6 +8,12 @@ import models.Answer;
 import models.Question;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,12 +24,19 @@ import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import java.util.List;
+
 import com.itextpdf.text.pdf.PdfWriter;
 
 @Repository
 @Transactional
 public class FileDaoImp implements FileDao {
     private static final String FONT = "/fonts/times.ttf";
+
+    @Autowired
+    private HibernateTransactionManager manager;
 
     public static final String[][] DATA = {
             {"Name:.............................................................................", "Date (dd-mm-yyyy):....................................."},
@@ -116,16 +129,15 @@ public class FileDaoImp implements FileDao {
             document.open();
             addMetaData(document);
             addProfileInformation(document, technical);
-            addContent(document);
+            addQuestion(document);
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        List a = getRanDom("Java", 10);
+
     }
 
-    // iText allows to add metadata to the PDF which can be viewed in your Adobe
-    // Reader
-    // under File -> Properties
     private static void addMetaData(Document document) {
         document.addTitle("Technical Test");
         document.addSubject("Technical Test");
@@ -154,7 +166,7 @@ public class FileDaoImp implements FileDao {
         preface.add(createParagraphWithTab(DATA[0][0],  DATA[0][1]));
         preface.add(createParagraphWithTab(DATA[1][0],  DATA[1][1]));
         preface.add(createParagraphWithTab( DATA[2][0], DATA[2][1]));
-
+        addEmptyLine(preface, 1);
         preface.add(new Paragraph(
                 "University:..................................................................................................................................................................",
                 normalFont));
@@ -201,7 +213,21 @@ public class FileDaoImp implements FileDao {
         return p;
     }
 
-    private static void addContent(Document document) throws DocumentException {
+    private static void addQuestion(Document document) throws DocumentException, IOException{
+        BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+
+        Font catFont = new Font(bf, 18, Font.BOLD);
+        Font normalFont = new Font(bf, 12, Font.NORMAL);
+        Paragraph title = new Paragraph();
+        // We add one empty line
+        addEmptyLine(title, 1);
+        // Lets write a big header
+        title.setAlignment(Element.ALIGN_RIGHT);
+        title.add(new Paragraph("Test Questions", catFont));
+        document.add(title);
+
+        addYesNoQuestion(1, document, "Mot cau hoi nao do", "Cau tra loi 1;Cau tra loi 2");
+
 
 
     }
@@ -210,6 +236,35 @@ public class FileDaoImp implements FileDao {
         for (int i = 0; i < number; i++) {
             paragraph.add(new Paragraph(" "));
         }
+    }
+
+    private static void addYesNoQuestion (int number, Document document, String question, String answer) throws DocumentException, IOException{
+        BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+
+        Font catFont = new Font(bf, 18, Font.BOLD);
+        Font normalFont = new Font(bf, 12, Font.NORMAL);
+        Paragraph questionText = new Paragraph();
+        questionText.setAlignment(Element.ALIGN_RIGHT);
+        questionText.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
+        String[] words=answer.split(";");
+        char numberAnswer = 'A';
+        for(String w:words){
+            questionText.add(new Paragraph( numberAnswer + ". " + w, normalFont));
+            numberAnswer++;
+        }
+
+        document.add(questionText);
+    }
+
+    private List getRanDom(String technical, int number){
+        Session session = this.manager.getSessionFactory().getCurrentSession();
+
+        Criteria criteria = session.createCriteria(Question.class);
+//        criteria.add(Restrictions.eq('fieldVariable', anyValue));
+        criteria.setFetchMode("Answer", FetchMode.JOIN);
+        criteria.add(Restrictions.sqlRestriction("categoryid=1 order by rand()"));
+        criteria.setMaxResults(number);
+        return criteria.list();
     }
 }
 
