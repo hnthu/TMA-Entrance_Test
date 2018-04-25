@@ -116,5 +116,16 @@ CREATE TABLE `answer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- INSERT INTO `answer` (`id`, `questionid` , `answer`) VALUES
--- (1, 1, "111111", "Một câu hỏi");
+-- (1, 1, "111111", "Một câu hỏi
+--
+-- Table structure for table `Interview`
+--
+  
+CREATE TABLE `interview` (
+  `id` int(64) NOT NULL AUTO_INCREMENT,
+  `interviewname` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `questiontlist` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 COMMIT;

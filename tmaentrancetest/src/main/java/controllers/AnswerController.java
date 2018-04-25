@@ -32,8 +32,8 @@ public class AnswerController {
 
     @RequestMapping(value ="/deleteanswer/{id}", method = RequestMethod.DELETE)
     public String deleteAnswer(@PathVariable("id") int id){
-        Answer existingCategory = this.answerService.getAnswerById(id);
-        if(existingCategory != null){
+        Answer existingAnswer = this.answerService.getAnswerById(id);
+        if(existingAnswer != null){
             this.answerService.delete(id);
         }
         return "Deleted Successfully";
