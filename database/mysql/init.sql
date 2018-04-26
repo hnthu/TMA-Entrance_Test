@@ -96,6 +96,7 @@ CREATE TABLE `question` (
   `questiontypeid` int(64) NOT NULL,
   `questiontext` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   `correctanswer` int(64) NOT NULL,
+  `level` int(64) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT  fk_category FOREIGN KEY (categoryid) REFERENCES category(id),
   CONSTRAINT  fk_questionType FOREIGN KEY (questiontypeid) REFERENCES questionType(id)
@@ -109,14 +110,11 @@ CREATE TABLE `question` (
 CREATE TABLE `answer` (
   `id` int(64) NOT NULL AUTO_INCREMENT,
   `questionid` int(64) NOT NULL,
-  `answer1` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  `answer2` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  `answer3` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  `answer4` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `answer` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT  fk_question FOREIGN KEY (questionid) REFERENCES question(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- INSERT INTO `answer` (`id`, `questionid` , `answer1`, `answer2`, `answer3`, `answer4`) VALUES
--- (1, 1, "111111", "Một câu hỏi", "", "" );
+-- INSERT INTO `answer` (`id`, `questionid` , `answer`) VALUES
+-- (1, 1, "111111", "Một câu hỏi");
 COMMIT;

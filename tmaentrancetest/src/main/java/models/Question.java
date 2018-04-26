@@ -17,13 +17,16 @@ public class Question {
     private String questiontext;
     @Column(name = "correctanswer", nullable = false)
     private int correctanswer;
+    @Column(name = "level", nullable = false)
+    private int level;
 
-    public Question(int id, int categoryid, int questiontypeid, String questiontext, int correctanswer) {
+    public Question(int id, int questiontypeid, int categoryid, String questiontext, int correctanswer, int level) {
         this.id = id;
         this.questiontypeid = questiontypeid;
         this.categoryid = categoryid;
         this.questiontext = questiontext;
         this.correctanswer = correctanswer;
+        this.level = level;
     }
 
     public Question() {
@@ -69,6 +72,10 @@ public class Question {
         this.correctanswer = correctanswer;
     }
 
+    public int getLevel() { return level;}
+
+    public void setLevel(int level) { this.level = level;}
+
     @Override
     public String toString() {
         return "Question{" +
@@ -77,6 +84,7 @@ public class Question {
                 ", categoryid=" + categoryid +
                 ", questiontext='" + questiontext + '\'' +
                 ", correctanswer=" + correctanswer +
+                ", level=" + level +
                 '}';
     }
 }

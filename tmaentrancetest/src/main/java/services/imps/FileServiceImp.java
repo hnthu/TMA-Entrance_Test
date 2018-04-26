@@ -15,7 +15,6 @@ import java.io.IOException;
 
 @Service
 public class FileServiceImp implements FileService {
-    @Autowired
     private FileDao fileDao;
 
     @Autowired
@@ -38,14 +37,19 @@ public class FileServiceImp implements FileService {
 
     @Override
     @Transactional
-    public Question convertToQuestion(int id, String CategoryId, String QuestionTypeId, String QuestionText, String CorrectAnswer){
-        return this.fileDao.convertToQuestion(id, CategoryId, QuestionTypeId, QuestionText, CorrectAnswer);
+    public Question convertToQuestion(int id, String CategoryId, String QuestionTypeId, String QuestionText, String CorrectAnswer, String Level){
+        return this.fileDao.convertToQuestion(id, CategoryId, QuestionTypeId, QuestionText, CorrectAnswer, Level);
     }
 
     @Override
     @Transactional
-    public Answer convertToAnswer(int id, int QuestionId, String Answer1, String Answer2, String Answer3, String Answer4){
-        return this.fileDao.convertToAnswer(id, QuestionId, Answer1, Answer2, Answer3, Answer4);
+    public Answer convertToAnswer(int id, int QuestionId, String Answer){
+        return this.fileDao.convertToAnswer(id, QuestionId, Answer);
     }
 
+    @Override
+    @Transactional
+    public void exportPDF(String technical){
+        this.fileDao.exportPDF(technical);
+    }
 }

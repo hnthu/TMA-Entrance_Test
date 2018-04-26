@@ -27,8 +27,6 @@ public class FileController {
     private FileService fileService;
     private QuestionService questionService;
     private AnswerService answerService;
-    //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = "C://temp//";
 
     @Autowired
     public void setFileService(FileService fileService) {
@@ -53,9 +51,9 @@ public class FileController {
         }
         String [][] data = this.fileService.importData(uploadfile);
         for(int i = 1; i < data.length; i++){
-            Question q = this.fileService.convertToQuestion(i , data[i][7], data[i][8], data[i][1], data[i][6]);
+            Question q = this.fileService.convertToQuestion(i , data[i][5], data[i][6], data[i][1], data[i][3], data[i][4]);
             this.questionService.add(q);
-            Answer a = this.fileService.convertToAnswer(i , i , data[i][2], data[i][3], data[i][4], data[i][5]);
+            Answer a = this.fileService.convertToAnswer(i , i , data[i][2]);
             this.answerService.add(a);
         }
         return new ResponseEntity("Successfully uploaded - " +
@@ -63,4 +61,8 @@ public class FileController {
 
     }
 
+    @RequestMapping(value = "/exportPDF/{technical}", method = RequestMethod.GET)
+    public void exportPDF(@PathVariable("technical") String technical) {
+        this.fileService.exportPDF(technical);
+    }
 }
