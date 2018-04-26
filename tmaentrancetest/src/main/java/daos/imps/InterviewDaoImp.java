@@ -14,7 +14,7 @@ import javax.transaction.Transactional;
 @Repository
 @Transactional
 public class InterviewDaoImp implements InterViewDao{
-    private static final org.slf4j.Logger logger =  LoggerFactory.getLogger(UserDaoImp.class);
+    private static final org.slf4j.Logger logger =  LoggerFactory.getLogger(InterviewDaoImp.class);
     private SessionFactory sessionFactory;
 
     @Autowired

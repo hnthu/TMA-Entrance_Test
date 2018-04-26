@@ -124,8 +124,12 @@ CREATE TABLE `answer` (
 CREATE TABLE `interview` (
   `id` int(64) NOT NULL AUTO_INCREMENT,
   `interviewname` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  `questiontlist` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `questionlist` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- INSERT INTO `interview` (`id`, `interviewname` , `questionlist`) VALUES
+-- (1, "Kiem tra nhan vien A", "aaaaaaaaa");
+
 
 COMMIT;

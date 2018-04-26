@@ -12,6 +12,16 @@ public class Answer {
     private int questionid;
     @Column(name = "answer")
     private String answer;
+    @OneToOne(fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
+    private Question question;
+
+    public Answer(int id, int questionid, String answer, Question question) {
+        this.id = id;
+        this.questionid = questionid;
+        this.answer = answer;
+        this.question = question;
+    }
 
     public Answer(int id, int questionid, String answer) {
         this.id = id;
@@ -46,12 +56,22 @@ public class Answer {
         this.answer = answer;
     }
 
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
     @Override
     public String toString() {
         return "Answer{" +
                 "id=" + id +
                 ", questionid=" + questionid +
                 ", answer='" + answer + '\'' +
+                ", question=" + question.toString() +
                 '}';
     }
 }

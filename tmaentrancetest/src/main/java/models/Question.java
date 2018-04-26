@@ -1,6 +1,8 @@
 package models;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "question")
@@ -19,6 +21,8 @@ public class Question {
     private int correctanswer;
     @Column(name = "level", nullable = false)
     private int level;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "question", cascade = CascadeType.ALL)
+    private Answer answer;
 
     public Question(int id, int questiontypeid, int categoryid, String questiontext, int correctanswer, int level) {
         this.id = id;
@@ -30,6 +34,16 @@ public class Question {
     }
 
     public Question() {
+    }
+
+    public Question(int id, int questiontypeid, int categoryid, String questiontext, int correctanswer, int level, Answer answer) {
+        this.id = id;
+        this.questiontypeid = questiontypeid;
+        this.categoryid = categoryid;
+        this.questiontext = questiontext;
+        this.correctanswer = correctanswer;
+        this.level = level;
+        this.answer = answer;
     }
 
     public int getQuestiontypeid() {
@@ -76,6 +90,14 @@ public class Question {
 
     public void setLevel(int level) { this.level = level;}
 
+    public Answer getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(Answer answer) {
+        this.answer = answer;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -85,6 +107,7 @@ public class Question {
                 ", questiontext='" + questiontext + '\'' +
                 ", correctanswer=" + correctanswer +
                 ", level=" + level +
+                ", answer=" + answer.toString() +
                 '}';
     }
 }

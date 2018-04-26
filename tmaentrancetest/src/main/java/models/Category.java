@@ -10,11 +10,11 @@ public class Category {
     @Column(name = "id", nullable = false)
     private int id;
     @Column(name = "categoryname", nullable = false)
-    private String categoty;
+    private String categotyname;
 
     public Category(int id, String categoty) {
         this.id = id;
-        this.categoty = categoty;
+        this.categotyname = categoty;
     }
 
     public Category() {
@@ -29,11 +29,11 @@ public class Category {
     }
 
     public String getCategoty() {
-        return categoty;
+        return categotyname;
     }
 
     public void setCategoty(String categoty) {
-        this.categoty = categoty;
+        this.categotyname = categoty;
     }
 
     @Override

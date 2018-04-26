@@ -5,12 +5,15 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.BaseFont;
 import daos.FileDao;
 import models.Answer;
+import models.Category;
 import models.Question;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -134,8 +137,8 @@ public class FileDaoImp implements FileDao {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        List a = getRanDom("Java", 10);
-
+        List <Question> a = getRanDom("Java", 10);
+        String b = a.get(0).getQuestiontext();
     }
 
     private static void addMetaData(Document document) {
@@ -259,12 +262,21 @@ public class FileDaoImp implements FileDao {
     private List getRanDom(String technical, int number){
         Session session = this.manager.getSessionFactory().getCurrentSession();
 
-        Criteria criteria = session.createCriteria(Question.class);
-//        criteria.add(Restrictions.eq('fieldVariable', anyValue));
-        criteria.setFetchMode("Answer", FetchMode.JOIN);
-        criteria.add(Restrictions.sqlRestriction("categoryid=1 order by rand()"));
-        criteria.setMaxResults(number);
-        return criteria.list();
+        Criteria questionCriteria = session.createCriteria(Question.class);
+        Criteria answerCriteria = questionCriteria.createCriteria("answer");
+//        Criteria categoryCriteria = questionCriteria.createCriteria("category","cat");
+
+//        categoryCriteria.add(Restrictions.eq("categotyname", technical));
+//        questionCriteria.add(Restrictions.sqlRestriction("1=1 order by rand()"));
+
+//        ProjectionList properties = Projections.projectionList();
+//        properties.add(Projections.property("questiontext"));
+//        properties.add(Projections.property("id"));
+
+//        questionCriteria.setProjection(properties);
+        questionCriteria.add(Restrictions .sqlRestriction("1=1 order by rand()"));
+        questionCriteria.setMaxResults(number);
+        return questionCriteria.list();
     }
 }
 

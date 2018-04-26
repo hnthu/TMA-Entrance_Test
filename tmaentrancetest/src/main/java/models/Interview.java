@@ -10,17 +10,17 @@ public class Interview {
     @Column(name = "id", nullable = false)
     private int id;
     @Column(name = "interviewname", nullable = false)
-    private String interviewName;
+    private String interviewname;
     @Column(name = "questionlist", nullable = false)
-    private String questionList;
+    private String questionlist;
 
     public Interview() {
     }
 
-    public Interview(int id, String interviewName, String questionList) {
+    public Interview(int id, String interviewname, String questionlist) {
         this.id = id;
-        this.interviewName = interviewName;
-        this.questionList = questionList;
+        this.interviewname = interviewname;
+        this.questionlist = questionlist;
     }
 
     public int getId() {
@@ -32,27 +32,27 @@ public class Interview {
     }
 
     public String getInterviewName() {
-        return interviewName;
+        return interviewname;
     }
 
     public void setInterviewName(String interviewName) {
-        this.interviewName = interviewName;
+        this.interviewname = interviewName;
     }
 
     public String getQuestionList() {
-        return questionList;
+        return questionlist;
     }
 
     public void setQuestionList(String questionList) {
-        this.questionList = questionList;
+        this.questionlist = questionList;
     }
 
     @Override
     public String toString() {
         return "Interview{" +
                 "id=" + id +
-                ", interviewName='" + interviewName + '\'' +
-                ", questionList='" + questionList + '\'' +
+                ", interviewname='" + interviewname + '\'' +
+                ", questionlist='" + questionlist + '\'' +
                 '}';
     }
 }
