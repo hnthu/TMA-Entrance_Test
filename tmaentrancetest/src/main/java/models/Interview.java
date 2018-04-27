@@ -9,20 +9,21 @@ import java.util.Set;
 public class Interview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "interviewId", nullable = false)
+    @Column(name = "interviewId")
     private int interviewId;
-    @ManyToMany(mappedBy = "interviews")
-    private Set<Question> questions = new HashSet<>();
-    @Column(name = "interviewName", nullable = false)
+    @Column(name = "interviewName")
     private String interviewName;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "categoryId", cascade = CascadeType.ALL)
+    private Set<Question> questions = new HashSet<Question>(
+            0);
 
     public Interview() {
     }
 
-    public Interview(int interviewId, Set<Question> questions, String interviewName) {
+    public Interview(int interviewId, String interviewName, Set<Question> questions) {
         this.interviewId = interviewId;
-        this.questions = questions;
         this.interviewName = interviewName;
+        this.questions = questions;
     }
 
     public int getInterviewId() {
@@ -33,14 +34,6 @@ public class Interview {
         this.interviewId = interviewId;
     }
 
-    public Set<Question> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(Set<Question> questions) {
-        this.questions = questions;
-    }
-
     public String getInterviewName() {
         return interviewName;
     }
@@ -49,12 +42,20 @@ public class Interview {
         this.interviewName = interviewName;
     }
 
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
+    }
+
     @Override
     public String toString() {
         return "Interview{" +
                 "interviewId=" + interviewId +
-                ", questions=" + questions +
                 ", interviewName='" + interviewName + '\'' +
+                ", questions=" + questions +
                 '}';
     }
 }

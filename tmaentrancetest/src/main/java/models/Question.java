@@ -17,13 +17,6 @@ public class Question {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kindId", nullable = false)
     private Kind kindId;
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "questionInterview",
-            joinColumns = { @JoinColumn(name = "questionId") },
-            inverseJoinColumns = { @JoinColumn(name = "interviewId") }
-    )
-    Set<Interview> interviews = new HashSet<>();
     @Column(name = "questionText", nullable = false)
     private String questionText;
     @Column(name = "correctAnswer", nullable = false)
@@ -36,11 +29,10 @@ public class Question {
     public Question() {
     }
 
-    public Question(int questionId, Category categoryId, Kind kindId, Set<Interview> interviews, String questionText, int correctAnswer, int level, Answer answer) {
+    public Question(int questionId, Category categoryId, Kind kindId, String questionText, int correctAnswer, int level, Answer answer) {
         this.questionId = questionId;
         this.categoryId = categoryId;
         this.kindId = kindId;
-        this.interviews = interviews;
         this.questionText = questionText;
         this.correctAnswer = correctAnswer;
         this.level = level;
@@ -69,14 +61,6 @@ public class Question {
 
     public void setKindId(Kind kindId) {
         this.kindId = kindId;
-    }
-
-    public Set<Interview> getInterviews() {
-        return interviews;
-    }
-
-    public void setInterviews(Set<Interview> interviews) {
-        this.interviews = interviews;
     }
 
     public String getQuestionText() {
@@ -117,7 +101,6 @@ public class Question {
                 "questionId=" + questionId +
                 ", categoryId=" + categoryId +
                 ", kindId=" + kindId +
-                ", interviews=" + interviews +
                 ", questionText='" + questionText + '\'' +
                 ", correctAnswer=" + correctAnswer +
                 ", level=" + level +

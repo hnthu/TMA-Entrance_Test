@@ -91,7 +91,6 @@ CREATE TABLE `question` (
   `questionId` int(64) NOT NULL AUTO_INCREMENT,
   `categoryId` int(64) NOT NULL,  
   `kindId` int(64) NOT NULL,
-  `interviewId` int(64) NOT NULL,
   `questionText` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   `correctAnswer` int(64) NOT NULL,
   `level` int(64) NOT NULL,
@@ -123,19 +122,14 @@ CREATE TABLE `interview` (
   `interviewId` int(64) NOT NULL AUTO_INCREMENT,
   `questionId` int(64) NOT NULL,
   `interviewName` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`interviewId`)
+  PRIMARY KEY (`interviewId`),
+  CONSTRAINT  fk1_question FOREIGN KEY (questionId) REFERENCES question(questionId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- INSERT INTO `interview` (`interviewid`, `interviewname` , `questionlist`) VALUES
 -- (1, "Kiem tra nhan vien A", "aaaaaaaaa");
 
-CREATE TABLE `questionInterview` (
-  `questionId` int(11) NOT NULL,
-  `interviewId` int(11) NOT NULL,
-  PRIMARY KEY (`questionId`,`interviewId`),
-  CONSTRAINT fk1_questionInterview FOREIGN KEY (questionId) REFERENCES `question` (questionId),
-  CONSTRAINT fk2_questionInterview FOREIGN KEY (interviewId) REFERENCES `interview` (interviewId)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 COMMIT;

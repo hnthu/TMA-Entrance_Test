@@ -4,9 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.BaseFont;
 import daos.FileDao;
-import models.Answer;
-import models.Category;
-import models.Question;
+import models.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.hibernate.Criteria;
@@ -30,13 +28,23 @@ import java.nio.file.Paths;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
+import java.util.Set;
 
 import com.itextpdf.text.pdf.PdfWriter;
+import services.CategoryService;
+import services.InterviewService;
+import services.KindService;
 
 @Repository
 @Transactional
 public class FileDaoImp implements FileDao {
     private static final String FONT = "/fonts/times.ttf";
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private KindService kindService;
+    @Autowired
+    private InterviewService interviewServiceService;
 
     @Autowired
     private HibernateTransactionManager manager;
@@ -97,23 +105,26 @@ public class FileDaoImp implements FileDao {
     }
 
     @Override
-    public Question convertToQuestion(int id, String CategoryId,  String QuestionTypeId, String QuestionText, String CorrectAnswer,String Level){
+    public Question convertToQuestion(int id, String categoryId,  String kindId, String QuestionText, String CorrectAnswer,String Level){
+        Category cat = this.categoryService.getCategoryById(Integer.parseInt(categoryId));
+        Kind kind = this.kindService.getKindById(Integer.parseInt(kindId));
+
         Question q = new Question();
-//        q.setId(id);
-//        q.setCategoryid(Integer.parseInt(CategoryId));
-//        q.setQuestiontypeid(Integer.parseInt(QuestionTypeId));
-//        q.setQuestiontext(QuestionText);
-//        q.setCorrectanswer(Integer.parseInt(CorrectAnswer));
-//        q.setLevel(Integer.parseInt(Level));
+        q.setQuestionId(id);
+        q.setCategoryId(cat);
+        q.setKindId(kind);
+        q.setQuestionText(QuestionText);
+        q.setCorrectAnswer(Integer.parseInt(CorrectAnswer));
+        q.setLevel(Integer.parseInt(Level));
         return q;
     }
 
     @Override
     public Answer convertToAnswer(int id, int QuestionId, String Answer){
         Answer a = new Answer();
-//        a.setId(id);
-//        a.setQuestionid(QuestionId);
-//        a.setAnswer(Answer);
+        a.setAnswerId(id);
+        a.setQuestionId(QuestionId);
+        a.setAnswerList(Answer);
         return a;
     }
 
