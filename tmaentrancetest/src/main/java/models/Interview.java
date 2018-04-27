@@ -1,58 +1,60 @@
 package models;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "interview")
 public class Interview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-    @Column(name = "interviewname", nullable = false)
-    private String interviewname;
-    @Column(name = "questionlist", nullable = false)
-    private String questionlist;
+    @Column(name = "interviewId", nullable = false)
+    private int interviewId;
+    @ManyToMany(mappedBy = "interviews")
+    private Set<Question> questions = new HashSet<>();
+    @Column(name = "interviewName", nullable = false)
+    private String interviewName;
 
     public Interview() {
     }
 
-    public Interview(int id, String interviewname, String questionlist) {
-        this.id = id;
-        this.interviewname = interviewname;
-        this.questionlist = questionlist;
+    public Interview(int interviewId, Set<Question> questions, String interviewName) {
+        this.interviewId = interviewId;
+        this.questions = questions;
+        this.interviewName = interviewName;
     }
 
-    public int getId() {
-        return id;
+    public int getInterviewId() {
+        return interviewId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setInterviewId(int interviewId) {
+        this.interviewId = interviewId;
+    }
+
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
     }
 
     public String getInterviewName() {
-        return interviewname;
+        return interviewName;
     }
 
     public void setInterviewName(String interviewName) {
-        this.interviewname = interviewName;
-    }
-
-    public String getQuestionList() {
-        return questionlist;
-    }
-
-    public void setQuestionList(String questionList) {
-        this.questionlist = questionList;
+        this.interviewName = interviewName;
     }
 
     @Override
     public String toString() {
         return "Interview{" +
-                "id=" + id +
-                ", interviewname='" + interviewname + '\'' +
-                ", questionlist='" + questionlist + '\'' +
+                "interviewId=" + interviewId +
+                ", questions=" + questions +
+                ", interviewName='" + interviewName + '\'' +
                 '}';
     }
 }

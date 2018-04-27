@@ -55,35 +55,32 @@ INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `category` (
-  `id` int(64) NOT NULL AUTO_INCREMENT,
-  `categoryname` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+  `categoryId` int(64) NOT NULL AUTO_INCREMENT,
+  `categoryName` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`categoryId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Dumping data for table `user`
---
 
-INSERT INTO `category` (`id`, `categoryname`) VALUES
+INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
 (1, 'Java');
 
   
   
 --
--- Table structure for table `Question type`
+-- Table structure for table `Type`
 --
 
-CREATE TABLE IF NOT EXISTS `questionType` (
-  `id` int(64) NOT NULL AUTO_INCREMENT,
-  `typename` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE IF NOT EXISTS `kind` (
+  `kindId` int(64) NOT NULL AUTO_INCREMENT,
+  `kindName` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`kindId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `questionType` (`id`, `typename`) VALUES
+INSERT INTO `kind` (`kindId`, `kindName`) VALUES
 (1, 'YesNo');
   
 --
@@ -91,45 +88,54 @@ INSERT INTO `questionType` (`id`, `typename`) VALUES
 --
   
 CREATE TABLE `question` (
-  `id` int(64) NOT NULL AUTO_INCREMENT,
-  `categoryid` int(64) NOT NULL,
-  `questiontypeid` int(64) NOT NULL,
-  `questiontext` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  `correctanswer` int(64) NOT NULL,
+  `questionId` int(64) NOT NULL AUTO_INCREMENT,
+  `categoryId` int(64) NOT NULL,  
+  `kindId` int(64) NOT NULL,
+  `interviewId` int(64) NOT NULL,
+  `questionText` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `correctAnswer` int(64) NOT NULL,
   `level` int(64) NOT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT  fk_category FOREIGN KEY (categoryid) REFERENCES category(id),
-  CONSTRAINT  fk_questionType FOREIGN KEY (questiontypeid) REFERENCES questionType(id)
+  PRIMARY KEY (`questionId`),
+  CONSTRAINT  fk_category FOREIGN KEY (categoryId) REFERENCES category(categoryId),
+  CONSTRAINT  fk_kind FOREIGN KEY (kindId) REFERENCES kind(kindId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- INSERT INTO `question` (`id`, `categoryid` , `questiontypeid`, `questiontext`, `correctanswer`) VALUES
+-- INSERT INTO `question` (`questionid`, `categoryid` , `questiontypeid`, `questiontext`, `correctanswer`) VALUES
 -- (1, 1, 1, "Một câu hỏi", 1 );
 --
 -- Table structure for table `Answer`
 --
 CREATE TABLE `answer` (
-  `id` int(64) NOT NULL AUTO_INCREMENT,
-  `questionid` int(64) NOT NULL,
-  `answer` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT  fk_question FOREIGN KEY (questionid) REFERENCES question(id)
+  `answerId` int(64) NOT NULL AUTO_INCREMENT,
+  `questionId` int(64) NOT NULL,
+  `answerList` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`answerId`),
+  CONSTRAINT  fk_question FOREIGN KEY (questionId) REFERENCES question(questionId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- INSERT INTO `answer` (`id`, `questionid` , `answer`) VALUES
+-- INSERT INTO `answer` (`answerid`, `questionid` , `answer`) VALUES
 -- (1, 1, "111111", "Một câu hỏi
 --
 -- Table structure for table `Interview`
 --
   
 CREATE TABLE `interview` (
-  `id` int(64) NOT NULL AUTO_INCREMENT,
-  `interviewname` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  `questionlist` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+  `interviewId` int(64) NOT NULL AUTO_INCREMENT,
+  `questionId` int(64) NOT NULL,
+  `interviewName` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`interviewId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- INSERT INTO `interview` (`id`, `interviewname` , `questionlist`) VALUES
+-- INSERT INTO `interview` (`interviewid`, `interviewname` , `questionlist`) VALUES
 -- (1, "Kiem tra nhan vien A", "aaaaaaaaa");
+
+CREATE TABLE `questionInterview` (
+  `questionId` int(11) NOT NULL,
+  `interviewId` int(11) NOT NULL,
+  PRIMARY KEY (`questionId`,`interviewId`),
+  CONSTRAINT fk1_questionInterview FOREIGN KEY (questionId) REFERENCES `question` (questionId),
+  CONSTRAINT fk2_questionInterview FOREIGN KEY (interviewId) REFERENCES `interview` (interviewId)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 COMMIT;

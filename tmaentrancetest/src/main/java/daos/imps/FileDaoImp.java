@@ -99,21 +99,21 @@ public class FileDaoImp implements FileDao {
     @Override
     public Question convertToQuestion(int id, String CategoryId,  String QuestionTypeId, String QuestionText, String CorrectAnswer,String Level){
         Question q = new Question();
-        q.setId(id);
-        q.setCategoryid(Integer.parseInt(CategoryId));
-        q.setQuestiontypeid(Integer.parseInt(QuestionTypeId));
-        q.setQuestiontext(QuestionText);
-        q.setCorrectanswer(Integer.parseInt(CorrectAnswer));
-        q.setLevel(Integer.parseInt(Level));
+//        q.setId(id);
+//        q.setCategoryid(Integer.parseInt(CategoryId));
+//        q.setQuestiontypeid(Integer.parseInt(QuestionTypeId));
+//        q.setQuestiontext(QuestionText);
+//        q.setCorrectanswer(Integer.parseInt(CorrectAnswer));
+//        q.setLevel(Integer.parseInt(Level));
         return q;
     }
 
     @Override
     public Answer convertToAnswer(int id, int QuestionId, String Answer){
         Answer a = new Answer();
-        a.setId(id);
-        a.setQuestionid(QuestionId);
-        a.setAnswer(Answer);
+//        a.setId(id);
+//        a.setQuestionid(QuestionId);
+//        a.setAnswer(Answer);
         return a;
     }
 
@@ -137,8 +137,8 @@ public class FileDaoImp implements FileDao {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        List <Question> a = getRanDom("Java", 10);
-        String b = a.get(0).getQuestiontext();
+//        List <Question> a = getRanDom("Java", 10);
+//        String b = a.get(0).getQuestiontext();
     }
 
     private static void addMetaData(Document document) {

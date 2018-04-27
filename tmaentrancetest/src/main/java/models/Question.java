@@ -9,86 +9,99 @@ import java.util.Set;
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-    @Column(name = "categoryid", nullable = false)
-    private int questiontypeid;
-    @Column(name = "questiontypeid", nullable = false)
-    private int categoryid;
-    @Column(name = "questiontext", nullable = false)
-    private String questiontext;
-    @Column(name = "correctanswer", nullable = false)
-    private int correctanswer;
+    @Column(name = "questionId", nullable = false)
+    private int questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoryId", nullable = false)
+    private Category categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kindId", nullable = false)
+    private Kind kindId;
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "questionInterview",
+            joinColumns = { @JoinColumn(name = "questionId") },
+            inverseJoinColumns = { @JoinColumn(name = "interviewId") }
+    )
+    Set<Interview> interviews = new HashSet<>();
+    @Column(name = "questionText", nullable = false)
+    private String questionText;
+    @Column(name = "correctAnswer", nullable = false)
+    private int correctAnswer;
     @Column(name = "level", nullable = false)
     private int level;
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "question", cascade = CascadeType.ALL)
     private Answer answer;
 
-    public Question(int id, int questiontypeid, int categoryid, String questiontext, int correctanswer, int level) {
-        this.id = id;
-        this.questiontypeid = questiontypeid;
-        this.categoryid = categoryid;
-        this.questiontext = questiontext;
-        this.correctanswer = correctanswer;
-        this.level = level;
-    }
-
     public Question() {
     }
 
-    public Question(int id, int questiontypeid, int categoryid, String questiontext, int correctanswer, int level, Answer answer) {
-        this.id = id;
-        this.questiontypeid = questiontypeid;
-        this.categoryid = categoryid;
-        this.questiontext = questiontext;
-        this.correctanswer = correctanswer;
+    public Question(int questionId, Category categoryId, Kind kindId, Set<Interview> interviews, String questionText, int correctAnswer, int level, Answer answer) {
+        this.questionId = questionId;
+        this.categoryId = categoryId;
+        this.kindId = kindId;
+        this.interviews = interviews;
+        this.questionText = questionText;
+        this.correctAnswer = correctAnswer;
         this.level = level;
         this.answer = answer;
     }
 
-    public int getQuestiontypeid() {
-        return questiontypeid;
+    public int getQuestionId() {
+        return questionId;
     }
 
-    public void setQuestiontypeid(int questiontypeid) {
-        this.questiontypeid = questiontypeid;
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
     }
 
-    public int getId() {
-        return id;
+    public Category getCategoryId() {
+        return categoryId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCategoryId(Category categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public int getCategoryid() {
-        return categoryid;
+    public Kind getKindId() {
+        return kindId;
     }
 
-    public void setCategoryid(int categoryid) {
-        this.categoryid = categoryid;
+    public void setKindId(Kind kindId) {
+        this.kindId = kindId;
     }
 
-    public String getQuestiontext() {
-        return questiontext;
+    public Set<Interview> getInterviews() {
+        return interviews;
     }
 
-    public void setQuestiontext(String questiontext) {
-        this.questiontext = questiontext;
+    public void setInterviews(Set<Interview> interviews) {
+        this.interviews = interviews;
     }
 
-    public int getCorrectanswer() {
-        return correctanswer;
+    public String getQuestionText() {
+        return questionText;
     }
 
-    public void setCorrectanswer(int correctanswer) {
-        this.correctanswer = correctanswer;
+    public void setQuestionText(String questionText) {
+        this.questionText = questionText;
     }
 
-    public int getLevel() { return level;}
+    public int getCorrectAnswer() {
+        return correctAnswer;
+    }
 
-    public void setLevel(int level) { this.level = level;}
+    public void setCorrectAnswer(int correctAnswer) {
+        this.correctAnswer = correctAnswer;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
 
     public Answer getAnswer() {
         return answer;
@@ -101,13 +114,14 @@ public class Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", questiontypeid=" + questiontypeid +
-                ", categoryid=" + categoryid +
-                ", questiontext='" + questiontext + '\'' +
-                ", correctanswer=" + correctanswer +
+                "questionId=" + questionId +
+                ", categoryId=" + categoryId +
+                ", kindId=" + kindId +
+                ", interviews=" + interviews +
+                ", questionText='" + questionText + '\'' +
+                ", correctAnswer=" + correctAnswer +
                 ", level=" + level +
-                ", answer=" + answer.toString() +
+                ", answer=" + answer +
                 '}';
     }
 }

@@ -1,45 +1,62 @@
 package models;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "category")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-    @Column(name = "categoryname", nullable = false)
+    @Column(name = "categoryId", nullable = false)
+    private int categoryId;
+    @Column(name = "categoryName", nullable = false)
     private String categotyname;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "categoryId", cascade = CascadeType.ALL)
+    private Set<Question> questions = new HashSet<Question>(
+            0);
 
-    public Category(int id, String categoty) {
-        this.id = id;
-        this.categotyname = categoty;
+    public Category(int id, String categotyname, Set<Question> questions) {
+        this.categoryId = id;
+        this.categotyname = categotyname;
+        this.questions = questions;
     }
 
     public Category() {
     }
 
     public int getId() {
-        return id;
+        return categoryId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.categoryId = id;
     }
 
-    public String getCategoty() {
+    public String getCategotyname() {
         return categotyname;
     }
 
-    public void setCategoty(String categoty) {
-        this.categotyname = categoty;
+    public void setCategotyname(String categotyname) {
+        this.categotyname = categotyname;
+    }
+
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
     }
 
     @Override
     public String toString() {
-        return super.toString();
+        return "Category{" +
+                "categoryId=" + categoryId +
+                ", categotyname='" + categotyname + '\'' +
+                ", questions=" + questions +
+                '}';
     }
-
 }
 
