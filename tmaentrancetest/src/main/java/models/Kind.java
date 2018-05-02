@@ -12,7 +12,7 @@ public class Kind {
     private int kindId;
     @Column(name = "kindName", nullable = false)
     private String kindName;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "kindId")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "kindId")
     private Set<Question> questions = new HashSet<Question>(
             0);
 

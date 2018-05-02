@@ -18,6 +18,8 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
+
+DROP DATABASE IF EXISTS productDatabase;
 --
 -- Database: `productDatabase`
 --
@@ -82,6 +84,22 @@ CREATE TABLE IF NOT EXISTS `kind` (
 
 INSERT INTO `kind` (`kindId`, `kindName`) VALUES
 (1, 'YesNo');
+
+
+--
+-- Table structure for table `Interview`
+--
+  
+CREATE TABLE `interview` (
+  `interviewId` int(64) NOT NULL AUTO_INCREMENT,
+  `questionId` int(64) NOT NULL,
+  `interviewName` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`interviewId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- INSERT INTO `interview` (`interviewid`, `interviewname` , `questionlist`) VALUES
+-- (1, "Kiem tra nhan vien A", "aaaaaaaaa");
+
   
 --
 -- Table structure for table `Question`
@@ -114,22 +132,6 @@ CREATE TABLE `answer` (
 
 -- INSERT INTO `answer` (`answerid`, `questionid` , `answer`) VALUES
 -- (1, 1, "111111", "Một câu hỏi
---
--- Table structure for table `Interview`
---
-  
-CREATE TABLE `interview` (
-  `interviewId` int(64) NOT NULL AUTO_INCREMENT,
-  `questionId` int(64) NOT NULL,
-  `interviewName` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`interviewId`),
-  CONSTRAINT  fk1_question FOREIGN KEY (questionId) REFERENCES question(questionId)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- INSERT INTO `interview` (`interviewid`, `interviewname` , `questionlist`) VALUES
--- (1, "Kiem tra nhan vien A", "aaaaaaaaa");
-
-
 
 
 COMMIT;

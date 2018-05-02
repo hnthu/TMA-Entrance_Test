@@ -95,16 +95,16 @@ public class Question {
         this.answer = answer;
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "questionId=" + questionId +
-                ", categoryId=" + categoryId +
-                ", kindId=" + kindId +
-                ", questionText='" + questionText + '\'' +
-                ", correctAnswer=" + correctAnswer +
-                ", level=" + level +
-                ", answer=" + answer +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Question{" +
+//                "questionId=" + questionId +
+//                ", categoryId=" + categoryId +
+//                ", kindId=" + kindId +
+//                ", questionText='" + questionText + '\'' +
+//                ", correctAnswer=" + correctAnswer +
+//                ", level=" + level +
+//                ", answer=" + answer +
+//                '}';
+//    }
 }

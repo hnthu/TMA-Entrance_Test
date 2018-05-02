@@ -10,6 +10,6 @@ import java.io.IOException;
 public interface FileDao {
     public String[][] importData(MultipartFile file) throws IOException, InvalidFormatException;
     public Question convertToQuestion(int id, String CategoryId, String QuestionTypeId, String QuestionText, String CorrectAnswer, String Level);
-    public Answer convertToAnswer(int id, int QuestionId, String Answer);
+    public Answer convertToAnswer(int id, int questionId, String answer, Question question);
     public void exportPDF(String technical);
 }

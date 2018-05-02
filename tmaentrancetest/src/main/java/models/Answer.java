@@ -12,7 +12,8 @@ public class Answer {
     private int questionId;
     @Column(name = "answerList")
     private String answerList;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
     private Question question;
 
     public Answer() {

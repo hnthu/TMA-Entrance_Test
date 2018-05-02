@@ -13,7 +13,7 @@ public class Category {
     private int categoryId;
     @Column(name = "categoryName", nullable = false)
     private String categotyname;
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "categoryId", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "categoryId", cascade = CascadeType.ALL)
     private Set<Question> questions = new HashSet<Question>(
             0);
 

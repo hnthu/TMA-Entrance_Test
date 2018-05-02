@@ -34,6 +34,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import services.CategoryService;
 import services.InterviewService;
 import services.KindService;
+import services.QuestionService;
 
 @Repository
 @Transactional
@@ -44,7 +45,9 @@ public class FileDaoImp implements FileDao {
     @Autowired
     private KindService kindService;
     @Autowired
-    private InterviewService interviewServiceService;
+    private InterviewService interviewService;
+    @Autowired
+    private QuestionService questionService;
 
     @Autowired
     private HibernateTransactionManager manager;
@@ -120,11 +123,12 @@ public class FileDaoImp implements FileDao {
     }
 
     @Override
-    public Answer convertToAnswer(int id, int QuestionId, String Answer){
+    public Answer convertToAnswer(int id, int QuestionId, String Answer, Question Question){
         Answer a = new Answer();
         a.setAnswerId(id);
         a.setQuestionId(QuestionId);
         a.setAnswerList(Answer);
+        a.setQuestion(Question);
         return a;
     }
 
@@ -143,13 +147,13 @@ public class FileDaoImp implements FileDao {
             document.open();
             addMetaData(document);
             addProfileInformation(document, technical);
-            addQuestion(document);
+
+            List <Question> question = getRanDom("Java", 10);
+            addQuestion(document, question);
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        List <Question> a = getRanDom("Java", 10);
-//        String b = a.get(0).getQuestiontext();
     }
 
     private static void addMetaData(Document document) {
@@ -227,7 +231,7 @@ public class FileDaoImp implements FileDao {
         return p;
     }
 
-    private static void addQuestion(Document document) throws DocumentException, IOException{
+    private static void addQuestion(Document document, List<Question> questions) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
@@ -239,11 +243,14 @@ public class FileDaoImp implements FileDao {
         title.setAlignment(Element.ALIGN_RIGHT);
         title.add(new Paragraph("Test Questions", catFont));
         document.add(title);
-
-        addYesNoQuestion(1, document, "Mot cau hoi nao do", "Cau tra loi 1;Cau tra loi 2");
-
-
-
+        for(int i = 0; i < questions.size(); i++  ){
+            switch(questions.get(i).getKindId().getKindId()){
+                case 1:
+                    addMultipleChoiceQuestion(i+1, document, questions.get(i).getQuestionText(), questions.get(i).getAnswer());
+                    break;
+                default :
+            }
+        }
     }
 
     private static void addEmptyLine(Paragraph paragraph, int number) {
@@ -252,7 +259,7 @@ public class FileDaoImp implements FileDao {
         }
     }
 
-    private static void addYesNoQuestion (int number, Document document, String question, String answer) throws DocumentException, IOException{
+    private static void addMultipleChoiceQuestion (int number, Document document, String question, Answer answer) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
@@ -260,7 +267,7 @@ public class FileDaoImp implements FileDao {
         Paragraph questionText = new Paragraph();
         questionText.setAlignment(Element.ALIGN_RIGHT);
         questionText.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
-        String[] words=answer.split(";");
+        String[] words=answer.getAnswerList().split(";");
         char numberAnswer = 'A';
         for(String w:words){
             questionText.add(new Paragraph( numberAnswer + ". " + w, normalFont));
@@ -275,17 +282,12 @@ public class FileDaoImp implements FileDao {
 
         Criteria questionCriteria = session.createCriteria(Question.class);
         Criteria answerCriteria = questionCriteria.createCriteria("answer");
-//        Criteria categoryCriteria = questionCriteria.createCriteria("category","cat");
+        Criteria categoryCriteria = questionCriteria.createCriteria("categoryId");
 
-//        categoryCriteria.add(Restrictions.eq("categotyname", technical));
-//        questionCriteria.add(Restrictions.sqlRestriction("1=1 order by rand()"));
-
-//        ProjectionList properties = Projections.projectionList();
-//        properties.add(Projections.property("questiontext"));
-//        properties.add(Projections.property("id"));
-
-//        questionCriteria.setProjection(properties);
+        categoryCriteria.add(Restrictions.eq("categotyname", technical));
         questionCriteria.add(Restrictions .sqlRestriction("1=1 order by rand()"));
+        questionCriteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        questionCriteria.setFirstResult(1);
         questionCriteria.setMaxResults(number);
         return questionCriteria.list();
     }
