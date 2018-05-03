@@ -8,28 +8,19 @@ import models.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Session;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.transaction.Transactional;
 import java.io.*;
-
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import com.itextpdf.text.pdf.PdfWriter;
 import services.CategoryService;
 import services.InterviewService;
@@ -103,7 +94,7 @@ public class FileDaoImp implements FileDao {
             System.out.println(data);
             return data;
         }
-       ;
+
         return new String[0][];
     }
 
@@ -117,7 +108,7 @@ public class FileDaoImp implements FileDao {
         q.setCategoryId(cat);
         q.setKindId(kind);
         q.setQuestionText(QuestionText);
-        q.setCorrectAnswer(Integer.parseInt(CorrectAnswer));
+        q.setCorrectAnswer(CorrectAnswer);
         q.setLevel(Integer.parseInt(Level));
         return q;
     }
@@ -133,7 +124,7 @@ public class FileDaoImp implements FileDao {
     }
 
     @Override
-    public void exportPDF(String technical){
+    public void exportPDF(String technical, String interviewName){
         try {
             String FILE = "src/main/resources";
             File filePDF = new File(FILE);
@@ -149,7 +140,7 @@ public class FileDaoImp implements FileDao {
             addProfileInformation(document, technical);
 
             List <Question> question = getRanDom("Java", 10);
-            addQuestion(document, question);
+            addQuestion(document, question, interviewName);
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -231,11 +222,12 @@ public class FileDaoImp implements FileDao {
         return p;
     }
 
-    private static void addQuestion(Document document, List<Question> questions) throws DocumentException, IOException{
+    public void addQuestion(Document document, List<Question> questions, String interviewName) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
         Font normalFont = new Font(bf, 12, Font.NORMAL);
+        StringBuilder questionIdList = new StringBuilder();
         Paragraph title = new Paragraph();
         // We add one empty line
         addEmptyLine(title, 1);
@@ -250,7 +242,15 @@ public class FileDaoImp implements FileDao {
                     break;
                 default :
             }
+            questionIdList = questionIdList
+                    .append(questions.get(i).getQuestionId())
+                    .append("; ");
         }
+        Interview interview = new Interview();
+        interview.setInterviewName(interviewName);
+        interview.setQuestionList(questionIdList.toString());
+        this.interviewService.add(interview);
+
     }
 
     private static void addEmptyLine(Paragraph paragraph, int number) {
@@ -270,7 +270,7 @@ public class FileDaoImp implements FileDao {
         String[] words=answer.getAnswerList().split(";");
         char numberAnswer = 'A';
         for(String w:words){
-            questionText.add(new Paragraph( numberAnswer + ". " + w, normalFont));
+            questionText.add(new Paragraph( numberAnswer + ". " + w.trim(), normalFont));
             numberAnswer++;
         }
 
@@ -279,17 +279,22 @@ public class FileDaoImp implements FileDao {
 
     private List getRanDom(String technical, int number){
         Session session = this.manager.getSessionFactory().getCurrentSession();
+        List<Question> listQuestions = new ArrayList<Question>();
+        for(int i = 1; i < 4; i++){
+            Criteria questionCriteria1 = session.createCriteria(Question.class);
+            Criteria categoryCriteria1 = questionCriteria1.createCriteria("categoryId");
+            Criteria answerCriteria1 = questionCriteria1.createCriteria("answer");
+            categoryCriteria1.add(Restrictions.eq("categotyname", technical));
+            questionCriteria1.add(Restrictions.eq("level", i));
+            questionCriteria1.add(Restrictions .sqlRestriction("1=1 order by rand()"));
+            questionCriteria1.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            questionCriteria1.setMaxResults(5);
 
-        Criteria questionCriteria = session.createCriteria(Question.class);
-        Criteria answerCriteria = questionCriteria.createCriteria("answer");
-        Criteria categoryCriteria = questionCriteria.createCriteria("categoryId");
+            List a = questionCriteria1.list();
+            listQuestions.addAll(a);
+        }
 
-        categoryCriteria.add(Restrictions.eq("categotyname", technical));
-        questionCriteria.add(Restrictions .sqlRestriction("1=1 order by rand()"));
-        questionCriteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        questionCriteria.setFirstResult(1);
-        questionCriteria.setMaxResults(number);
-        return questionCriteria.list();
+        return listQuestions;
     }
 }
 

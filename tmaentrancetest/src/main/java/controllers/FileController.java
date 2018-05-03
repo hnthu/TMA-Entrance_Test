@@ -2,12 +2,14 @@ package controllers;
 
 import models.Answer;
 import models.Question;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,7 @@ import services.QuestionService;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -61,8 +64,11 @@ public class FileController {
 
     }
 
-    @RequestMapping(value = "/exportPDF/{technical}", method = RequestMethod.GET)
-    public void exportPDF(@PathVariable("technical") String technical) {
-        this.fileService.exportPDF(technical);
+    @RequestMapping(value = "/exportPDF/{technical}/{interviewName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public  @ResponseBody byte[] exportPDF(@PathVariable("technical") String technical, @PathVariable("interviewName") String interviewName) throws IOException{
+        this.fileService.exportPDF(technical, interviewName);
+        InputStream in =  Files.newInputStream(Paths.get("src/main/resources/temp/a.pdf"));
+        return IOUtils.toByteArray(in);
+
     }
 }

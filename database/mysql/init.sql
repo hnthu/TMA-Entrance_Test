@@ -92,8 +92,8 @@ INSERT INTO `kind` (`kindId`, `kindName`) VALUES
   
 CREATE TABLE `interview` (
   `interviewId` int(64) NOT NULL AUTO_INCREMENT,
-  `questionId` int(64) NOT NULL,
   `interviewName` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `questionList` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`interviewId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -110,7 +110,7 @@ CREATE TABLE `question` (
   `categoryId` int(64) NOT NULL,  
   `kindId` int(64) NOT NULL,
   `questionText` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  `correctAnswer` int(64) NOT NULL,
+  `correctAnswer` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   `level` int(64) NOT NULL,
   PRIMARY KEY (`questionId`),
   CONSTRAINT  fk_category FOREIGN KEY (categoryId) REFERENCES category(categoryId),

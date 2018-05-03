@@ -10,5 +10,5 @@ public interface FileService {
     public String[][] importData(MultipartFile file) throws IOException, InvalidFormatException;
     public Question convertToQuestion(int id, String CategoryId, String QuestionTypeId, String QuestionText, String CorrectAnswer, String Level);
     public Answer convertToAnswer(int id, int  QuestionId, String Answer, Question question);
-    public void exportPDF(String technical);
+    public void exportPDF(String technical, String interviewName);
 }

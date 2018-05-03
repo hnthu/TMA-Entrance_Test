@@ -13,17 +13,16 @@ public class Interview {
     private int interviewId;
     @Column(name = "interviewName")
     private String interviewName;
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "categoryId", cascade = CascadeType.ALL)
-    private Set<Question> questions = new HashSet<Question>(
-            0);
+    @Column(name = "questionList")
+    private String questionList;
 
     public Interview() {
     }
 
-    public Interview(int interviewId, String interviewName, Set<Question> questions) {
+    public Interview(int interviewId, String interviewName, String questionList) {
         this.interviewId = interviewId;
         this.interviewName = interviewName;
-        this.questions = questions;
+        this.questionList = questionList;
     }
 
     public int getInterviewId() {
@@ -42,12 +41,12 @@ public class Interview {
         this.interviewName = interviewName;
     }
 
-    public Set<Question> getQuestions() {
-        return questions;
+    public String getQuestionList() {
+        return questionList;
     }
 
-    public void setQuestions(Set<Question> questions) {
-        this.questions = questions;
+    public void setQuestionList(String questionList) {
+        this.questionList = questionList;
     }
 
     @Override
@@ -55,7 +54,7 @@ public class Interview {
         return "Interview{" +
                 "interviewId=" + interviewId +
                 ", interviewName='" + interviewName + '\'' +
-                ", questions=" + questions +
+                ", questionList='" + questionList + '\'' +
                 '}';
     }
 }

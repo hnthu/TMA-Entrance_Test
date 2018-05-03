@@ -20,7 +20,7 @@ public class Question {
     @Column(name = "questionText", nullable = false)
     private String questionText;
     @Column(name = "correctAnswer", nullable = false)
-    private int correctAnswer;
+    private String correctAnswer;
     @Column(name = "level", nullable = false)
     private int level;
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "question", cascade = CascadeType.ALL)
@@ -29,7 +29,7 @@ public class Question {
     public Question() {
     }
 
-    public Question(int questionId, Category categoryId, Kind kindId, String questionText, int correctAnswer, int level, Answer answer) {
+    public Question(int questionId, Category categoryId, Kind kindId, String questionText, String correctAnswer, int level, Answer answer) {
         this.questionId = questionId;
         this.categoryId = categoryId;
         this.kindId = kindId;
@@ -71,11 +71,11 @@ public class Question {
         this.questionText = questionText;
     }
 
-    public int getCorrectAnswer() {
+    public String getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(int correctAnswer) {
+    public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 
