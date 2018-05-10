@@ -1,8 +1,9 @@
 package daos.imps;
 
+import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.*;
 import daos.FileDao;
 import models.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -21,7 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import com.itextpdf.text.pdf.PdfWriter;
+
 import services.CategoryService;
 import services.InterviewService;
 import services.KindService;
@@ -134,13 +135,13 @@ public class FileDaoImp implements FileDao {
             File file = new File(path.toString());
             file.getParentFile().mkdirs();
             Document document = new Document(PageSize.A4,30, 25, 28, 27);
-            PdfWriter.getInstance(document, new FileOutputStream(file));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
             document.open();
             addMetaData(document);
             addProfileInformation(document, technical);
 
             List <Question> question = getRanDom("Java", 10);
-            addQuestion(document, question, interviewName);
+            addQuestion(document, question, writer, interviewName);
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -222,7 +223,7 @@ public class FileDaoImp implements FileDao {
         return p;
     }
 
-    public void addQuestion(Document document, List<Question> questions, String interviewName) throws DocumentException, IOException{
+    public void addQuestion(Document document, List<Question> questions, PdfWriter writer, String interviewName) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
@@ -238,7 +239,13 @@ public class FileDaoImp implements FileDao {
         for(int i = 0; i < questions.size(); i++  ){
             switch(questions.get(i).getKindId().getKindId()){
                 case 1:
-                    addMultipleChoiceQuestion(i+1, document, questions.get(i).getQuestionText(), questions.get(i).getAnswer());
+                    document.add(addSingleAnswerQuestion(i+1, questions.get(i).getQuestionText(), questions.get(i).getAnswer()));
+                    break;
+                case 2:
+                    document.add(addMultipleAnswerQuestion(i+1, writer, questions.get(i).getQuestionText(), questions.get(i).getAnswer()));
+                    break;
+                case 3:
+                    document.add(addShortQuestion(i+1, questions.get(i).getQuestionText(), questions.get(i).getAnswer()));
                     break;
                 default :
             }
@@ -259,7 +266,31 @@ public class FileDaoImp implements FileDao {
         }
     }
 
-    private static void addMultipleChoiceQuestion (int number, Document document, String question, Answer answer) throws DocumentException, IOException{
+    private static Paragraph addMultipleAnswerQuestion (int number, PdfWriter writer, String question, Answer answer) throws DocumentException, IOException{
+        BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+
+        Font catFont = new Font(bf, 18, Font.BOLD);
+        Font normalFont = new Font(bf, 12, Font.NORMAL);
+        Paragraph questionText = new Paragraph();
+        questionText.setAlignment(Element.ALIGN_RIGHT);
+        questionText.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
+        String[] words=answer.getAnswerList().split(";");
+        char numberAnswer = 'A';
+        for(String w:words){
+            PdfFormField checkbox1 = PdfFormField.createCheckBox(writer);
+            checkbox1.setWidget(new Rectangle(524, 600, 540, 616),
+                    PdfAnnotation.HIGHLIGHT_NONE);
+            checkbox1.setValueAsName("Off");
+            checkbox1.setAppearanceState("Off");
+            checkbox1.setFieldName("UsersNo");
+            writer.addAnnotation(checkbox1);
+            questionText.add(new Paragraph( numberAnswer + ". " + w.trim(), normalFont));
+            numberAnswer++;
+        }
+       return questionText;
+    }
+
+    private static Paragraph addSingleAnswerQuestion (int number, String question, Answer answer) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
@@ -273,8 +304,24 @@ public class FileDaoImp implements FileDao {
             questionText.add(new Paragraph( numberAnswer + ". " + w.trim(), normalFont));
             numberAnswer++;
         }
+        return questionText;
+    }
 
-        document.add(questionText);
+    private static Paragraph addShortQuestion (int number, String question, Answer answer) throws DocumentException, IOException{
+        BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+
+        Font catFont = new Font(bf, 18, Font.BOLD);
+        Font normalFont = new Font(bf, 12, Font.NORMAL);
+        Paragraph questionText = new Paragraph();
+        questionText.setAlignment(Element.ALIGN_RIGHT);
+        questionText.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
+        String[] words=answer.getAnswerList().split(";");
+        char numberAnswer = 'A';
+        for(String w:words){
+            questionText.add(new Paragraph( numberAnswer + ". " + w.trim(), normalFont));
+            numberAnswer++;
+        }
+        return questionText;
     }
 
     private List getRanDom(String technical, int number){
@@ -282,13 +329,13 @@ public class FileDaoImp implements FileDao {
         List<Question> listQuestions = new ArrayList<Question>();
         for(int i = 1; i < 4; i++){
             Criteria questionCriteria1 = session.createCriteria(Question.class);
+            questionCriteria1.add(Restrictions .sqlRestriction("1=1 order by rand()"));
+            questionCriteria1.add(Restrictions.eq("level", i));
+            questionCriteria1.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            questionCriteria1.setMaxResults(5);
             Criteria categoryCriteria1 = questionCriteria1.createCriteria("categoryId");
             Criteria answerCriteria1 = questionCriteria1.createCriteria("answer");
             categoryCriteria1.add(Restrictions.eq("categotyname", technical));
-            questionCriteria1.add(Restrictions.eq("level", i));
-            questionCriteria1.add(Restrictions .sqlRestriction("1=1 order by rand()"));
-            questionCriteria1.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            questionCriteria1.setMaxResults(5);
 
             List a = questionCriteria1.list();
             listQuestions.addAll(a);

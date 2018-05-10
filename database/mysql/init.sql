@@ -47,6 +47,9 @@ CREATE TABLE IF NOT EXISTS `user` (
 INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
 (1, 'admin', 'admin', 'ROLE_ADMIN');
 
+INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
+(2, 'admin1', 'admin1', 'ROLE_ADMIN');
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
@@ -64,7 +67,13 @@ CREATE TABLE IF NOT EXISTS `category` (
 
 
 INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
-(1, 'Java');
+(1, 'java');
+INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
+(1, 'c++');
+INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
+(1, 'python');
+INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
+(1, 'english');
 
   
   
@@ -83,7 +92,11 @@ CREATE TABLE IF NOT EXISTS `kind` (
 --
 
 INSERT INTO `kind` (`kindId`, `kindName`) VALUES
-(1, 'YesNo');
+(1, 'MultipleAnswer');
+INSERT INTO `kind` (`kindId`, `kindName`) VALUES
+(2, 'SingleAnswer');
+INSERT INTO `kind` (`kindId`, `kindName`) VALUES
+(3, 'ShortQuestion');
 
 
 --
