@@ -69,11 +69,11 @@ CREATE TABLE IF NOT EXISTS `category` (
 INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
 (1, 'java');
 INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
-(1, 'c++');
+(2, 'c++');
 INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
-(1, 'python');
+(3, 'python');
 INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
-(1, 'english');
+(4, 'english');
 
   
   
@@ -105,7 +105,7 @@ INSERT INTO `kind` (`kindId`, `kindName`) VALUES
   
 CREATE TABLE `interview` (
   `interviewId` int(64) NOT NULL AUTO_INCREMENT,
-  `interviewName` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `interviewName` varchar(128) COLLATE utf8_unicode_ci NOT NULL UNIQUE,
   `questionList` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`interviewId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -124,7 +124,7 @@ CREATE TABLE `question` (
   `kindId` int(64) NOT NULL,
   `questionText` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   `correctAnswer` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
-  `level` int(64) NOT NULL,
+  `hardLevel` int(64) NOT NULL,
   PRIMARY KEY (`questionId`),
   CONSTRAINT  fk_category FOREIGN KEY (categoryId) REFERENCES category(categoryId),
   CONSTRAINT  fk_kind FOREIGN KEY (kindId) REFERENCES kind(kindId)

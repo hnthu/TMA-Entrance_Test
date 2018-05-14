@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,14 +14,15 @@ public class Category {
     @Column(name = "categoryId", nullable = false)
     private int categoryId;
     @Column(name = "categoryName", nullable = false)
-    private String categotyname;
+    private String categoryName;
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "categoryId", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Question> questions = new HashSet<Question>(
             0);
 
-    public Category(int id, String categotyname, Set<Question> questions) {
-        this.categoryId = id;
-        this.categotyname = categotyname;
+    public Category(int categoryId, String categoryName, Set<Question> questions) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
         this.questions = questions;
     }
 
@@ -30,16 +33,16 @@ public class Category {
         return categoryId;
     }
 
-    public void setId(int id) {
-        this.categoryId = id;
+    public void setId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public String getCategotyname() {
-        return categotyname;
+    public String getCategoryname() {
+        return categoryName;
     }
 
-    public void setCategotyname(String categotyname) {
-        this.categotyname = categotyname;
+    public void setCategoryname(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public Set<Question> getQuestions() {
@@ -54,7 +57,7 @@ public class Category {
     public String toString() {
         return "Category{" +
                 "categoryId=" + categoryId +
-                ", categotyname='" + categotyname + '\'' +
+                ", categoryName='" + categoryName + '\'' +
                 ", questions=" + questions +
                 '}';
     }

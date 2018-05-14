@@ -1,5 +1,7 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,17 +15,20 @@ public class Question {
     private int questionId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId", nullable = false)
+    @JsonIgnore
     private Category categoryId;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "kindId", nullable = false)
     private Kind kindId;
     @Column(name = "questionText", nullable = false)
     private String questionText;
     @Column(name = "correctAnswer", nullable = false)
     private String correctAnswer;
-    @Column(name = "level", nullable = false)
-    private int level;
+    @Column(name = "hardLevel", nullable = false)
+    private int hardLevel;
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "question", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Answer answer;
 
     public Question() {
@@ -35,7 +40,7 @@ public class Question {
         this.kindId = kindId;
         this.questionText = questionText;
         this.correctAnswer = correctAnswer;
-        this.level = level;
+        this.hardLevel = level;
         this.answer = answer;
     }
 
@@ -80,11 +85,11 @@ public class Question {
     }
 
     public int getLevel() {
-        return level;
+        return hardLevel;
     }
 
     public void setLevel(int level) {
-        this.level = level;
+        this.hardLevel = level;
     }
 
     public Answer getAnswer() {
@@ -103,7 +108,7 @@ public class Question {
 //                ", kindId=" + kindId +
 //                ", questionText='" + questionText + '\'' +
 //                ", correctAnswer=" + correctAnswer +
-//                ", level=" + level +
+//                ", hardLevel=" + hardLevel +
 //                ", answer=" + answer +
 //                '}';
 //    }

@@ -1,6 +1,5 @@
 package daos.imps;
 
-import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.*;
@@ -10,18 +9,25 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
+
+import static java.lang.Math.toIntExact;
 
 import services.CategoryService;
 import services.InterviewService;
@@ -125,29 +131,129 @@ public class FileDaoImp implements FileDao {
     }
 
     @Override
-    public void exportPDF(String technical, String interviewName){
+    public String exportPDF(String technical, String interviewName){
+        String fileName = "";
         try {
+            int count = 1;
             String FILE = "src/main/resources";
             File filePDF = new File(FILE);
-            String temp = "temp/a.pdf";
+            String temp = "temp/"+generateUniqueFileName()+".pdf";
             Path path = filePDF.toPath();
             path = Paths.get(path.toString(), temp);
             File file = new File(path.toString());
             file.getParentFile().mkdirs();
+            while(file.exists()){
+                temp = "temp/"+generateUniqueFileName()+String.valueOf(count)+".pdf";
+                path = filePDF.toPath();
+                path = Paths.get(path.toString(), temp);
+                file = new File(path.toString());
+                file.getParentFile().mkdirs();
+                count++;
+            }
+            fileName = path.toString();
             Document document = new Document(PageSize.A4,30, 25, 28, 27);
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
             document.open();
             addMetaData(document);
-            addProfileInformation(document, technical);
+            Paragraph profile = addProfileInformation(technical);
 
             List <Question> question = getRanDom("Java", 10);
-            addQuestion(document, question, writer, interviewName);
+            Paragraph questionList = addQuestion(question, writer);
+            Paragraph interview = new Paragraph();
+            addInterview(question, writer, interviewName);
+            interview.setAlignment(Element.ALIGN_RIGHT);
+            document.add(interview);
+            document.add(profile);
+            document.add(questionList);
+
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return fileName;
     }
 
+    @Override
+    public String exportListAnswer(String interviewName){
+        String fileName = "";
+        try {
+            int count = 1;
+            String FILE = "src/main/resources";
+            File filePDF = new File(FILE);
+            String temp = "temp/"+generateUniqueFileName()+".pdf";
+            Path path = filePDF.toPath();
+            path = Paths.get(path.toString(), temp);
+            File file = new File(path.toString());
+            file.getParentFile().mkdirs();
+            while(file.exists()){
+                temp = "temp/"+generateUniqueFileName()+String.valueOf(count)+".pdf";
+                path = filePDF.toPath();
+                path = Paths.get(path.toString(), temp);
+                file = new File(path.toString());
+                file.getParentFile().mkdirs();
+                count++;
+            }
+            fileName = path.toString();
+            Document document = new Document(PageSize.A4,30, 25, 28, 27);
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+            document.open();
+            BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+
+            Font catFont = new Font(bf, 18, Font.BOLD);
+            Font normalFont = new Font(bf, 12, Font.NORMAL);
+            Paragraph preface = new Paragraph();
+            // We add one empty line
+            addEmptyLine(preface, 1);
+            // Lets write a big header
+            preface.setAlignment(Element.ALIGN_RIGHT);
+            preface.add(new Paragraph("Answer List " + interviewName, catFont));
+            //Lets write profile information
+            addEmptyLine(preface, 1);
+            document.add(preface);
+            PdfPTable listAnswer = addAnswerList(interviewName);
+            document.add(listAnswer);
+            document.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileName;
+    }
+    private PdfPTable addAnswerList(String interviewName) throws DocumentException, IOException{
+
+        Session session = this.manager.getSessionFactory().getCurrentSession();
+        Criteria interviewCriteria = session.createCriteria(Interview.class);
+        interviewCriteria.add(Restrictions.eq("interviewName", interviewName));
+        List<Interview> interview = interviewCriteria.list();
+        PdfPTable table = new PdfPTable(2);
+        if(interview.size() > 0){
+            String answers = interview.get(0).getQuestionList();
+            String[] questionList = answers.split(";");
+            table.setTotalWidth(288);
+            table.setLockedWidth(true);
+            table.setWidths(new float[]{1, 1});
+            PdfPCell cell;
+            cell = new PdfPCell(new Phrase("Answer table"));
+            cell.setColspan(2);
+            table.addCell(cell);
+            int index = 0;
+            for(String w: questionList){
+                if(!w.trim().equals("")){
+                    table.addCell(String.valueOf(++index));
+                    table.addCell(w.trim());
+                }
+            }
+        }
+        return table;
+    }
+
+    private  static String generateUniqueFileName() {
+        String filename = "";
+        String datetime = new Date().toGMTString();
+        datetime = datetime.replace(" ", "");
+        datetime = datetime.replace(":", "");
+        filename = datetime;
+        return filename;
+    }
     private static void addMetaData(Document document) {
         document.addTitle("Technical Test");
         document.addSubject("Technical Test");
@@ -156,22 +262,20 @@ public class FileDaoImp implements FileDao {
         document.addCreator("Phuc Pham");
     }
 
-    private static void addProfileInformation(Document document, String technical)
+    private static Paragraph addProfileInformation(String technical)
             throws DocumentException, IOException {
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
         Font normalFont = new Font(bf, 12, Font.NORMAL);
-        Paragraph title = new Paragraph();
+        Paragraph preface = new Paragraph();
         // We add one empty line
-        addEmptyLine(title, 1);
+        addEmptyLine(preface, 1);
         // Lets write a big header
-        title.setAlignment(Element.ALIGN_RIGHT);
-        title.add(new Paragraph(technical + " Technical Test", catFont));
-        document.add(title);
+        preface.setAlignment(Element.ALIGN_RIGHT);
+        preface.add(new Paragraph(technical + " Technical Test", catFont));
 
         //Lets write profile information
-        Paragraph preface = new Paragraph();
         addEmptyLine(preface, 1);
         preface.add(createParagraphWithTab(DATA[0][0],  DATA[0][1]));
         preface.add(createParagraphWithTab(DATA[1][0],  DATA[1][1]));
@@ -207,10 +311,10 @@ public class FileDaoImp implements FileDao {
         preface.add(new Paragraph(
                 "Other certificates you have (CCNA, CCNP etc):......................................................................................................",
                 normalFont));
-        document.add(preface);
+        return preface;
     }
 
-    public static Paragraph createParagraphWithTab(String key, String value1) throws IOException, DocumentException {
+    private static Paragraph createParagraphWithTab(String key, String value1) throws IOException, DocumentException {
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         Font subFont = new Font(bf, 16, Font.BOLD);
         Font smallBold = new Font(bf, 12, Font.BOLD);
@@ -223,57 +327,84 @@ public class FileDaoImp implements FileDao {
         return p;
     }
 
-    public void addQuestion(Document document, List<Question> questions, PdfWriter writer, String interviewName) throws DocumentException, IOException{
+    public Paragraph addQuestion(List<Question> questions, PdfWriter writer) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
         Font normalFont = new Font(bf, 12, Font.NORMAL);
         StringBuilder questionIdList = new StringBuilder();
-        Paragraph title = new Paragraph();
+        Paragraph preface = new Paragraph();
         // We add one empty line
-        addEmptyLine(title, 1);
+        addEmptyLine(preface, 1);
         // Lets write a big header
-        title.setAlignment(Element.ALIGN_RIGHT);
-        title.add(new Paragraph("Test Questions", catFont));
-        document.add(title);
-        for(int i = 0; i < questions.size(); i++  ){
-            switch(questions.get(i).getKindId().getKindId()){
+        preface.setAlignment(Element.ALIGN_RIGHT);
+        preface.add(new Paragraph("Test Questions", catFont));
+        int i = 0;
+        while(questions.size() > 0){
+            int rand = new Random().nextInt(questions.size());
+            switch(questions.get(rand).getKindId().getKindId()){
                 case 1:
-                    document.add(addSingleAnswerQuestion(i+1, questions.get(i).getQuestionText(), questions.get(i).getAnswer()));
+                    addSingleAnswerQuestion(preface, i+1, questions.get(rand).getQuestionText(), questions.get(rand).getAnswer());
                     break;
                 case 2:
-                    document.add(addMultipleAnswerQuestion(i+1, writer, questions.get(i).getQuestionText(), questions.get(i).getAnswer()));
+                    addMultipleAnswerQuestion(preface, i+1, writer, questions.get(rand).getQuestionText(), questions.get(rand).getAnswer());
                     break;
                 case 3:
-                    document.add(addShortQuestion(i+1, questions.get(i).getQuestionText(), questions.get(i).getAnswer()));
+                    addShortQuestion(preface, i+1, questions.get(rand).getQuestionText(), questions.get(rand).getAnswer());
                     break;
                 default :
             }
+            i++;
+            questions.remove(rand);
+        }
+        return preface;
+    }
+
+    private Paragraph addInterview(List<Question> questions, PdfWriter writer ,String interviewName) throws DocumentException, IOException{
+        BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        Font normalFont = new Font(bf, 12, Font.BOLD);
+        StringBuilder questionIdList = new StringBuilder();
+        Paragraph preface = new Paragraph();
+        // We add one empty line
+        addEmptyLine(preface, 1);
+        // Lets write a big header
+        preface.setAlignment(Element.ALIGN_RIGHT);
+        for(int i = 0; i < questions.size(); i++  ){
             questionIdList = questionIdList
                     .append(questions.get(i).getQuestionId())
                     .append("; ");
         }
+
+        Session session = this.manager.getSessionFactory().getCurrentSession();
+        int numberInterview = 0;
+        Criteria criteria = session.createCriteria(Interview.class)
+                .setProjection(Projections.rowCount());
+
+        List result = criteria.list();
+        if (!result.isEmpty()) {
+            numberInterview = toIntExact((Long) result.get(0));
+        }
+        numberInterview++;
+        preface.add(new Paragraph(interviewName+String.valueOf(numberInterview), normalFont));
         Interview interview = new Interview();
-        interview.setInterviewName(interviewName);
+        interview.setInterviewName(interviewName+ String.valueOf(numberInterview));
         interview.setQuestionList(questionIdList.toString());
         this.interviewService.add(interview);
-
+        return preface;
     }
-
     private static void addEmptyLine(Paragraph paragraph, int number) {
         for (int i = 0; i < number; i++) {
             paragraph.add(new Paragraph(" "));
         }
     }
 
-    private static Paragraph addMultipleAnswerQuestion (int number, PdfWriter writer, String question, Answer answer) throws DocumentException, IOException{
+    private static void addMultipleAnswerQuestion (Paragraph preface, int number, PdfWriter writer, String question, Answer answer) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
         Font normalFont = new Font(bf, 12, Font.NORMAL);
-        Paragraph questionText = new Paragraph();
-        questionText.setAlignment(Element.ALIGN_RIGHT);
-        questionText.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
+        preface.setAlignment(Element.ALIGN_RIGHT);
+        preface.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
         String[] words=answer.getAnswerList().split(";");
         char numberAnswer = 'A';
         for(String w:words){
@@ -284,44 +415,36 @@ public class FileDaoImp implements FileDao {
             checkbox1.setAppearanceState("Off");
             checkbox1.setFieldName("UsersNo");
             writer.addAnnotation(checkbox1);
-            questionText.add(new Paragraph( numberAnswer + ". " + w.trim(), normalFont));
+            preface.add(new Paragraph( numberAnswer + ". " + w.trim(), normalFont));
             numberAnswer++;
         }
-       return questionText;
     }
 
-    private static Paragraph addSingleAnswerQuestion (int number, String question, Answer answer) throws DocumentException, IOException{
+    private static void addSingleAnswerQuestion (Paragraph preface, int number, String question, Answer answer) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
         Font normalFont = new Font(bf, 12, Font.NORMAL);
-        Paragraph questionText = new Paragraph();
-        questionText.setAlignment(Element.ALIGN_RIGHT);
-        questionText.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
+        preface.setAlignment(Element.ALIGN_RIGHT);
+        preface.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
         String[] words=answer.getAnswerList().split(";");
         char numberAnswer = 'A';
         for(String w:words){
-            questionText.add(new Paragraph( numberAnswer + ". " + w.trim(), normalFont));
+            preface.add(new Paragraph( numberAnswer + ". " + w.trim(), normalFont));
             numberAnswer++;
         }
-        return questionText;
     }
 
-    private static Paragraph addShortQuestion (int number, String question, Answer answer) throws DocumentException, IOException{
+    private static void addShortQuestion (Paragraph preface, int number, String question, Answer answer) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
 
         Font catFont = new Font(bf, 18, Font.BOLD);
         Font normalFont = new Font(bf, 12, Font.NORMAL);
-        Paragraph questionText = new Paragraph();
-        questionText.setAlignment(Element.ALIGN_RIGHT);
-        questionText.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
-        String[] words=answer.getAnswerList().split(";");
-        char numberAnswer = 'A';
-        for(String w:words){
-            questionText.add(new Paragraph( numberAnswer + ". " + w.trim(), normalFont));
-            numberAnswer++;
+        preface.setAlignment(Element.ALIGN_RIGHT);
+        preface.add(new Paragraph(String.valueOf(number) + ". " + question, normalFont));
+        for(int i =0; i < 5; i++){
+            preface.add(new Paragraph(  "..................................................................................................................................................................................." , normalFont));
         }
-        return questionText;
     }
 
     private List getRanDom(String technical, int number){
@@ -329,16 +452,25 @@ public class FileDaoImp implements FileDao {
         List<Question> listQuestions = new ArrayList<Question>();
         for(int i = 1; i < 4; i++){
             Criteria questionCriteria1 = session.createCriteria(Question.class);
-            questionCriteria1.add(Restrictions .sqlRestriction("1=1 order by rand()"));
-            questionCriteria1.add(Restrictions.eq("level", i));
+            questionCriteria1.add(Restrictions.eq("hardLevel", i));
             questionCriteria1.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            questionCriteria1.setMaxResults(5);
             Criteria categoryCriteria1 = questionCriteria1.createCriteria("categoryId");
             Criteria answerCriteria1 = questionCriteria1.createCriteria("answer");
-            categoryCriteria1.add(Restrictions.eq("categotyname", technical));
-
-            List a = questionCriteria1.list();
-            listQuestions.addAll(a);
+            categoryCriteria1.add(Restrictions.eq("categoryName", technical));
+            questionCriteria1.setProjection(Projections.rowCount());
+            int count = ((Number) questionCriteria1.uniqueResult()).intValue();
+            if (0 != count) {
+                int index = new Random().nextInt(count - 5);
+                questionCriteria1 = session.createCriteria(Question.class);
+                questionCriteria1.add(Restrictions.eq("hardLevel", i));
+                categoryCriteria1 = questionCriteria1.createCriteria("categoryId");
+                answerCriteria1 = questionCriteria1.createCriteria("answer");
+                categoryCriteria1.add(Restrictions.eq("categoryName", technical));
+                questionCriteria1.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                questionCriteria1.setFirstResult(index).setMaxResults(5);
+                List a = questionCriteria1.list();
+                listQuestions.addAll(a);
+            }
         }
 
         return listQuestions;

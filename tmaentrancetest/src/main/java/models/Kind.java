@@ -1,4 +1,6 @@
 package models;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +15,7 @@ public class Kind {
     @Column(name = "kindName", nullable = false)
     private String kindName;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "kindId")
+    @JsonIgnore
     private Set<Question> questions = new HashSet<Question>(
             0);
 

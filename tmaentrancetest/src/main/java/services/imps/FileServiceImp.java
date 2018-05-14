@@ -49,7 +49,13 @@ public class FileServiceImp implements FileService {
 
     @Override
     @Transactional
-    public void exportPDF(String technical, String interviewName){
-        this.fileDao.exportPDF(technical, interviewName);
+    public String exportPDF(String technical, String interviewName){
+        return this.fileDao.exportPDF(technical, interviewName);
+    }
+
+    @Override
+    @Transactional
+    public String exportListAnswer(String interviewName){
+        return this.fileDao.exportListAnswer(interviewName);
     }
 }

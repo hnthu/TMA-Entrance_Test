@@ -17,7 +17,7 @@ public class KindController {
         this.kindService = questionTypeService;
     }
 
-    @RequestMapping(value = "/getallquestiontypes", method = RequestMethod.GET)
+    @RequestMapping(value = "/getallkinds", method = RequestMethod.GET)
     public Object getAllQuestionTypes() {
         logger2.info("is running get all user in the database.");
         logger2.debug("is running get all user in the database.");
@@ -25,12 +25,12 @@ public class KindController {
         return kindService.getAll();
     }
 
-    @RequestMapping(value = "/getquestiontypebyid/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/getkindbyid/{id}", method = RequestMethod.GET)
     public Object getQuestionTypeById(@PathVariable("id") int id) {
         return kindService.getKindById(id);
     }
 
-    @RequestMapping(value ="/deletequestiontype/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value ="/deletekind/{id}", method = RequestMethod.DELETE)
     public String deleteQuestionType(@PathVariable("id") int id){
         Kind existingQuestionType = this.kindService.getKindById(id);
         if(existingQuestionType != null){
@@ -39,7 +39,7 @@ public class KindController {
         return "Deleted Successfully";
     }
 
-    @RequestMapping(value = "/updatequestiontype/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/updatekind/{id}", method = RequestMethod.PUT)
     public Object updateQuestionType(@PathVariable("id") int id,  @RequestBody Kind updateUser){
         Kind currentQuestionType = this.kindService.getKindById(id);
         if(currentQuestionType != null){
@@ -48,7 +48,7 @@ public class KindController {
         return "Updated successfully";
     }
 
-    @RequestMapping(value = "/addquestiontype", method = RequestMethod.POST)
+    @RequestMapping(value = "/addkind", method = RequestMethod.POST)
     public String addQuestionType(@RequestBody Kind addKind){
         this.kindService.add(addKind);
         return "Added successfully";
