@@ -107,6 +107,7 @@ CREATE TABLE `interview` (
   `interviewId` int(64) NOT NULL AUTO_INCREMENT,
   `interviewName` varchar(128) COLLATE utf8_unicode_ci NOT NULL UNIQUE,
   `questionList` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `answerList` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`interviewId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

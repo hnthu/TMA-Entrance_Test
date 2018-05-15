@@ -15,14 +15,17 @@ public class Interview {
     private String interviewName;
     @Column(name = "questionList")
     private String questionList;
+    @Column(name = "answerList")
+    private String answerList;
 
     public Interview() {
     }
 
-    public Interview(int interviewId, String interviewName, String questionList) {
+    public Interview(int interviewId, String interviewName, String questionList, String answerList) {
         this.interviewId = interviewId;
         this.interviewName = interviewName;
         this.questionList = questionList;
+        this.answerList = answerList;
     }
 
     public int getInterviewId() {
@@ -49,12 +52,21 @@ public class Interview {
         this.questionList = questionList;
     }
 
+    public String getAnswerList() {
+        return answerList;
+    }
+
+    public void setAnswerList(String answerList) {
+        this.answerList = answerList;
+    }
+
     @Override
     public String toString() {
         return "Interview{" +
                 "interviewId=" + interviewId +
                 ", interviewName='" + interviewName + '\'' +
                 ", questionList='" + questionList + '\'' +
+                ", answerList='" + answerList + '\'' +
                 '}';
     }
 }

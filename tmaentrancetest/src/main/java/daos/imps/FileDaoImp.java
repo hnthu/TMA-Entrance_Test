@@ -158,9 +158,9 @@ public class FileDaoImp implements FileDao {
             Paragraph profile = addProfileInformation(technical);
 
             List <Question> question = getRanDom("Java", 10);
-            Paragraph questionList = addQuestion(question, writer);
             Paragraph interview = new Paragraph();
-            addInterview(question, writer, interviewName);
+            interview = addInterview(question, writer, interviewName);
+            Paragraph questionList = addQuestion(question, writer);
             interview.setAlignment(Element.ALIGN_RIGHT);
             document.add(interview);
             document.add(profile);
@@ -226,7 +226,7 @@ public class FileDaoImp implements FileDao {
         List<Interview> interview = interviewCriteria.list();
         PdfPTable table = new PdfPTable(2);
         if(interview.size() > 0){
-            String answers = interview.get(0).getQuestionList();
+            String answers = interview.get(0).getAnswerList();
             String[] questionList = answers.split(";");
             table.setTotalWidth(288);
             table.setLockedWidth(true);
@@ -238,6 +238,7 @@ public class FileDaoImp implements FileDao {
             int index = 0;
             for(String w: questionList){
                 if(!w.trim().equals("")){
+                    Criteria questionCriteria = session.createCriteria(Interview.class);
                     table.addCell(String.valueOf(++index));
                     table.addCell(w.trim());
                 }
@@ -364,6 +365,7 @@ public class FileDaoImp implements FileDao {
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         Font normalFont = new Font(bf, 12, Font.BOLD);
         StringBuilder questionIdList = new StringBuilder();
+        StringBuilder answerList = new StringBuilder();
         Paragraph preface = new Paragraph();
         // We add one empty line
         addEmptyLine(preface, 1);
@@ -372,6 +374,9 @@ public class FileDaoImp implements FileDao {
         for(int i = 0; i < questions.size(); i++  ){
             questionIdList = questionIdList
                     .append(questions.get(i).getQuestionId())
+                    .append("; ");
+            answerList = answerList
+                    .append(questions.get(i).getCorrectAnswer())
                     .append("; ");
         }
 
@@ -389,6 +394,7 @@ public class FileDaoImp implements FileDao {
         Interview interview = new Interview();
         interview.setInterviewName(interviewName+ String.valueOf(numberInterview));
         interview.setQuestionList(questionIdList.toString());
+        interview.setAnswerList(answerList.toString());
         this.interviewService.add(interview);
         return preface;
     }

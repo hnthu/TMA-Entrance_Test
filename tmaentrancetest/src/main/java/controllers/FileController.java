@@ -82,7 +82,7 @@ public class FileController {
         String mimeType= URLConnection.guessContentTypeFromName(file.getName());
         if(mimeType==null){
             System.out.println("mimetype is not detectable, will take default");
-            mimeType = "application/octet-stream";
+            mimeType = "application/pdf";
         }
 
         System.out.println("mimetype : "+mimeType);
@@ -117,7 +117,7 @@ public class FileController {
         String mimeType= URLConnection.guessContentTypeFromName(file.getName());
         if(mimeType==null){
             System.out.println("mimetype is not detectable, will take default");
-            mimeType = "application/octet-stream";
+            mimeType = "application/pdf";
         }
 
         System.out.println("mimetype : "+mimeType);
