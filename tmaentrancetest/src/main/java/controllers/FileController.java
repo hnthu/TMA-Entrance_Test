@@ -2,21 +2,26 @@ package controllers;
 
 import models.Answer;
 import models.Question;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import services.AnswerService;
 import services.FileService;
 import services.QuestionService;
 
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -53,7 +58,7 @@ public class FileController {
         for(int i = 1; i < data.length; i++){
             Question q = this.fileService.convertToQuestion(i , data[i][5], data[i][6], data[i][1], data[i][3], data[i][4]);
             this.questionService.add(q);
-            Answer a = this.fileService.convertToAnswer(i , i , data[i][2]);
+            Answer a = this.fileService.convertToAnswer(i , q.getQuestionId(), data[i][2], q);
             this.answerService.add(a);
         }
         return new ResponseEntity("Successfully uploaded - " +
@@ -61,8 +66,75 @@ public class FileController {
 
     }
 
-    @RequestMapping(value = "/exportPDF/{technical}", method = RequestMethod.GET)
-    public void exportPDF(@PathVariable("technical") String technical) {
-        this.fileService.exportPDF(technical);
+    @RequestMapping(value = "/exportPDF/{technical}/{interviewName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public  void exportPDF(HttpServletResponse response, @PathVariable("technical") String technical, @PathVariable("interviewName") String interviewName) throws IOException{
+        String fileName = this.fileService.exportPDF(technical, interviewName);
+        File file = new File(fileName);
+        if(!file.exists()){
+            String errorMessage = "Sorry. The file you are looking for does not exist";
+            System.out.println(errorMessage);
+            OutputStream outputStream = response.getOutputStream();
+            outputStream.write(errorMessage.getBytes(Charset.forName("UTF-8")));
+            outputStream.close();
+            return;
+        }
+
+        String mimeType= URLConnection.guessContentTypeFromName(file.getName());
+        if(mimeType==null){
+            System.out.println("mimetype is not detectable, will take default");
+            mimeType = "application/pdf";
+        }
+
+        System.out.println("mimetype : "+mimeType);
+
+        response.setContentType(mimeType);
+
+        response.setHeader("Content-Disposition", String.format("inline; filename=\"" + file.getName() +"\""));
+
+        response.setContentLength((int)file.length());
+
+        InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+
+        FileCopyUtils.copy(inputStream, response.getOutputStream());
+        if(file.exists()){
+            file.delete();
+        }
     }
+
+    @RequestMapping(value = "/exportanswerPDF/{interviewName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public  void exportAnswerPDF(HttpServletResponse response, @PathVariable("interviewName") String interviewName) throws IOException{
+        String fileName = this.fileService.exportListAnswer(interviewName);
+        File file = new File(fileName);
+        if(!file.exists()){
+            String errorMessage = "Sorry. The file you are looking for does not exist";
+            System.out.println(errorMessage);
+            OutputStream outputStream = response.getOutputStream();
+            outputStream.write(errorMessage.getBytes(Charset.forName("UTF-8")));
+            outputStream.close();
+            return;
+        }
+
+        String mimeType= URLConnection.guessContentTypeFromName(file.getName());
+        if(mimeType==null){
+            System.out.println("mimetype is not detectable, will take default");
+            mimeType = "application/pdf";
+        }
+
+        System.out.println("mimetype : "+mimeType);
+
+        response.setContentType(mimeType);
+
+        response.setHeader("Content-Disposition", String.format("inline; filename=\"" + file.getName() +"\""));
+
+        response.setContentLength((int)file.length());
+
+        InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+
+        FileCopyUtils.copy(inputStream, response.getOutputStream());
+        if(file.exists()){
+            file.delete();
+        }
+    }
+
+
 }

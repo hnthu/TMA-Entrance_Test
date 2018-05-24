@@ -1,90 +1,115 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "question")
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-    @Column(name = "categoryid", nullable = false)
-    private int questiontypeid;
-    @Column(name = "questiontypeid", nullable = false)
-    private int categoryid;
-    @Column(name = "questiontext", nullable = false)
-    private String questiontext;
-    @Column(name = "correctanswer", nullable = false)
-    private int correctanswer;
-    @Column(name = "level", nullable = false)
-    private int level;
-
-    public Question(int id, int questiontypeid, int categoryid, String questiontext, int correctanswer, int level) {
-        this.id = id;
-        this.questiontypeid = questiontypeid;
-        this.categoryid = categoryid;
-        this.questiontext = questiontext;
-        this.correctanswer = correctanswer;
-        this.level = level;
-    }
+    @Column(name = "questionId", nullable = false)
+    private int questionId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoryId", nullable = false)
+    @JsonIgnore
+    private Category categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JoinColumn(name = "kindId", nullable = false)
+    private Kind kindId;
+    @Column(name = "questionText", nullable = false)
+    private String questionText;
+    @Column(name = "correctAnswer", nullable = false)
+    private String correctAnswer;
+    @Column(name = "hardLevel", nullable = false)
+    private int hardLevel;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "question", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Answer answer;
 
     public Question() {
     }
 
-    public int getQuestiontypeid() {
-        return questiontypeid;
+    public Question(int questionId, Category categoryId, Kind kindId, String questionText, String correctAnswer, int level, Answer answer) {
+        this.questionId = questionId;
+        this.categoryId = categoryId;
+        this.kindId = kindId;
+        this.questionText = questionText;
+        this.correctAnswer = correctAnswer;
+        this.hardLevel = level;
+        this.answer = answer;
     }
 
-    public void setQuestiontypeid(int questiontypeid) {
-        this.questiontypeid = questiontypeid;
+    public int getQuestionId() {
+        return questionId;
     }
 
-    public int getId() {
-        return id;
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Category getCategoryId() {
+        return categoryId;
     }
 
-    public int getCategoryid() {
-        return categoryid;
+    public void setCategoryId(Category categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public void setCategoryid(int categoryid) {
-        this.categoryid = categoryid;
+    public Kind getKindId() {
+        return kindId;
     }
 
-    public String getQuestiontext() {
-        return questiontext;
+    public void setKindId(Kind kindId) {
+        this.kindId = kindId;
     }
 
-    public void setQuestiontext(String questiontext) {
-        this.questiontext = questiontext;
+    public String getQuestionText() {
+        return questionText;
     }
 
-    public int getCorrectanswer() {
-        return correctanswer;
+    public void setQuestionText(String questionText) {
+        this.questionText = questionText;
     }
 
-    public void setCorrectanswer(int correctanswer) {
-        this.correctanswer = correctanswer;
+    public String getCorrectAnswer() {
+        return correctAnswer;
     }
 
-    public int getLevel() { return level;}
-
-    public void setLevel(int level) { this.level = level;}
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", questiontypeid=" + questiontypeid +
-                ", categoryid=" + categoryid +
-                ", questiontext='" + questiontext + '\'' +
-                ", correctanswer=" + correctanswer +
-                ", level=" + level +
-                '}';
+    public void setCorrectAnswer(String correctAnswer) {
+        this.correctAnswer = correctAnswer;
     }
+
+    public int getLevel() {
+        return hardLevel;
+    }
+
+    public void setLevel(int level) {
+        this.hardLevel = level;
+    }
+
+    public Answer getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(Answer answer) {
+        this.answer = answer;
+    }
+
+//    @Override
+//    public String toString() {
+//        return "Question{" +
+//                "questionId=" + questionId +
+//                ", categoryId=" + categoryId +
+//                ", kindId=" + kindId +
+//                ", questionText='" + questionText + '\'' +
+//                ", correctAnswer=" + correctAnswer +
+//                ", hardLevel=" + hardLevel +
+//                ", answer=" + answer +
+//                '}';
+//    }
 }

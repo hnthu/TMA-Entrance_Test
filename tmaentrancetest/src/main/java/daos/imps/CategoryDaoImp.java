@@ -40,9 +40,6 @@ public class CategoryDaoImp implements CategoryDao {
     public List<Category> getAll() {
         Session session = this.manager.getSessionFactory().getCurrentSession();
         List<Category> categoryList = session.createQuery("from Category").list();
-        for (Category p : categoryList) {
-            logger.info("Category List:" + p);
-        }
         return categoryList;
     }
 

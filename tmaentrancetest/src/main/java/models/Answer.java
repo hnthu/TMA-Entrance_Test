@@ -1,4 +1,6 @@
 package models;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -6,52 +8,66 @@ import javax.persistence.*;
 public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-    @Column(name = "questionid", nullable = false)
-    private int questionid;
-    @Column(name = "answer")
-    private String answer;
-
-    public Answer(int id, int questionid, String answer) {
-        this.id = id;
-        this.questionid = questionid;
-        this.answer = answer;
-    }
+    @Column(name = "answerId", nullable = false)
+    private int answerId;
+    @Column(name = "questionId", nullable = false)
+    private int questionId;
+    @Column(name = "answerList")
+    private String answerList;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    @JsonIgnore
+    private Question question;
 
     public Answer() {
     }
 
-    public int getId() {
-        return id;
+    public Answer(int answerId, int questionId, String answerList, Question question) {
+        this.answerId = answerId;
+        this.questionId = questionId;
+        this.answerList = answerList;
+        this.question = question;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getAnswerId() {
+        return answerId;
     }
 
-    public int getQuestionid() {
-        return questionid;
+    public void setAnswerId(int answerId) {
+        this.answerId = answerId;
     }
 
-    public void setQuestionid(int questionid) {
-        this.questionid = questionid;
+    public int getQuestionId() {
+        return questionId;
     }
 
-    public String getAnswer() {
-        return answer;
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
+    public String getAnswerList() {
+        return answerList;
+    }
+
+    public void setAnswerList(String answerList) {
+        this.answerList = answerList;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     @Override
     public String toString() {
         return "Answer{" +
-                "id=" + id +
-                ", questionid=" + questionid +
-                ", answer='" + answer + '\'' +
+                "answerId=" + answerId +
+                ", questionId=" + questionId +
+                ", answerList='" + answerList + '\'' +
+                ", question=" + question +
                 '}';
     }
 }

@@ -1,45 +1,65 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "category")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private int id;
-    @Column(name = "categoryname", nullable = false)
-    private String categoty;
+    @Column(name = "categoryId", nullable = false)
+    private int categoryId;
+    @Column(name = "categoryName", nullable = false)
+    private String categoryName;
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "categoryId", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Question> questions = new HashSet<Question>(
+            0);
 
-    public Category(int id, String categoty) {
-        this.id = id;
-        this.categoty = categoty;
+    public Category(int categoryId, String categoryName, Set<Question> questions) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.questions = questions;
     }
 
     public Category() {
     }
 
     public int getId() {
-        return id;
+        return categoryId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public String getCategoty() {
-        return categoty;
+    public String getCategoryname() {
+        return categoryName;
     }
 
-    public void setCategoty(String categoty) {
-        this.categoty = categoty;
+    public void setCategoryname(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
     }
 
     @Override
     public String toString() {
-        return super.toString();
+        return "Category{" +
+                "categoryId=" + categoryId +
+                ", categoryName='" + categoryName + '\'' +
+                ", questions=" + questions +
+                '}';
     }
-
 }
 
