@@ -32,6 +32,12 @@ public class QuestionServiceImp implements QuestionService{
 
     @Override
     @Transactional
+    public List<Question> getQuestionsByProgrammingLanguage(String technical){
+        return questionDao.getQuestionsByProgrammingLanguage(technical);
+    }
+
+    @Override
+    @Transactional
     public List<Question> search(String searchString) {
         return questionDao.search(searchString);
     }

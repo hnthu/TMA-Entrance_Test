@@ -61,7 +61,7 @@ INSERT INTO `user` (`id`, `username`, `password`, `role`) VALUES
 
 CREATE TABLE IF NOT EXISTS `category` (
   `categoryId` int(64) NOT NULL AUTO_INCREMENT,
-  `categoryName` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `categoryName` varchar(64) COLLATE utf8_unicode_ci NOT NULL unique,
   PRIMARY KEY (`categoryId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -83,7 +83,7 @@ INSERT INTO `category` (`categoryId`, `categoryName`) VALUES
 
 CREATE TABLE IF NOT EXISTS `kind` (
   `kindId` int(64) NOT NULL AUTO_INCREMENT,
-  `kindName` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `kindName` varchar(64) COLLATE utf8_unicode_ci NOT NULL unique,
   PRIMARY KEY (`kindId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -105,16 +105,15 @@ INSERT INTO `kind` (`kindId`, `kindName`) VALUES
   
 CREATE TABLE `interview` (
   `interviewId` int(64) NOT NULL AUTO_INCREMENT,
-  `interviewName` varchar(128) COLLATE utf8_unicode_ci NOT NULL UNIQUE,
+  `interviewCode` varchar(512) COLLATE utf8_unicode_ci NOT NULL unique,
+  `interviewName` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `questionList` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   `answerList` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `categoryName` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
+  `description` varchar(5000) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`interviewId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- INSERT INTO `interview` (`interviewid`, `interviewname` , `questionlist`) VALUES
--- (1, "Kiem tra nhan vien A", "aaaaaaaaa");
-
-  
 --
 -- Table structure for table `Question`
 --
@@ -131,9 +130,6 @@ CREATE TABLE `question` (
   CONSTRAINT  fk_kind FOREIGN KEY (kindId) REFERENCES kind(kindId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- INSERT INTO `question` (`questionid`, `categoryid` , `questiontypeid`, `questiontext`, `correctanswer`) VALUES
--- (1, 1, 1, "Một câu hỏi", 1 );
---
 -- Table structure for table `Answer`
 --
 CREATE TABLE `answer` (
@@ -143,9 +139,5 @@ CREATE TABLE `answer` (
   PRIMARY KEY (`answerId`),
   CONSTRAINT  fk_question FOREIGN KEY (questionId) REFERENCES question(questionId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- INSERT INTO `answer` (`answerid`, `questionid` , `answer`) VALUES
--- (1, 1, "111111", "Một câu hỏi
-
 
 COMMIT;

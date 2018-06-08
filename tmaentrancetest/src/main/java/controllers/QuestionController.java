@@ -25,6 +25,11 @@ public class QuestionController {
         return questionService.getAll();
     }
 
+    @RequestMapping(value = "/getQuestionsByProgrammingLanguage/{technical}", method = RequestMethod.GET)
+    public Object getQuestionsByProgrammingLanguage(@PathVariable("technical") String technical) {
+        return questionService.getQuestionsByProgrammingLanguage(technical);
+    }
+
     @RequestMapping(value = "/getquestionbyid/{id}", method = RequestMethod.GET)
     public Object getQuestionById(@PathVariable("id") int id) {
         return questionService.getQuestionById(id);
