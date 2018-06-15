@@ -4,8 +4,12 @@ import models.Answer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import services.AnswerService;
+
+import java.util.ArrayList;
 
 @RestController
 public class AnswerController {
@@ -18,11 +22,11 @@ public class AnswerController {
     }
 
     @RequestMapping(value = "/getallanswers", method = RequestMethod.GET)
-    public Object getAllAnswers() {
+    public ResponseEntity<ArrayList<Answer>> getAllAnswers() {
         logger2.info("is running get all Answer in the database.");
         logger2.debug("is running get all Answer in the database.");
         logger2.error("is running get all Answer in the database.");
-        return answerService.getAll();
+        return new ResponseEntity<ArrayList<Answer>>((ArrayList<Answer>) answerService.getAll(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getanswerbyid/{id}", method = RequestMethod.GET)
