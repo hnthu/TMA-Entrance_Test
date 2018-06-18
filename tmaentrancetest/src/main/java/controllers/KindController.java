@@ -4,10 +4,12 @@ import models.Kind;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import services.KindService;
 
 @RestController
+@PreAuthorize("hasAnyRole(\"ROLE_USER\",\"ROLE_ADMIN\")")
 public class KindController {
     protected final Logger logger2 = LogManager.getLogger();
     private KindService kindService;
