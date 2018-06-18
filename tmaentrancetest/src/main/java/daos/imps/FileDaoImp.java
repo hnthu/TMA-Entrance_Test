@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -22,6 +23,7 @@ import java.io.*;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,7 +133,7 @@ public class FileDaoImp implements FileDao {
     }
 
     @Override
-    public String exportPDF(String technical, String interviewName){
+    public String exportRandomExamination(String technical, String interviewName, String description){
         String fileName = "";
         try {
             int count = 1;
@@ -157,9 +159,9 @@ public class FileDaoImp implements FileDao {
             addMetaData(document);
             Paragraph profile = addProfileInformation(technical);
 
-            List <Question> question = getRanDom("Java", 10);
+            List <Question> question = getRanDom(technical, 10);
             Paragraph interview = new Paragraph();
-            interview = addInterview(question, writer, interviewName);
+            interview = addInterview(question, writer, interviewName, technical, description);
             Paragraph questionList = addQuestion(question, writer);
             interview.setAlignment(Element.ALIGN_RIGHT);
             document.add(interview);
@@ -174,7 +176,51 @@ public class FileDaoImp implements FileDao {
     }
 
     @Override
-    public String exportListAnswer(String interviewName){
+    public String exportExamByInterviewCode(String technical, String interviewCode, String IdList){
+        String fileName = "";
+        try {
+            int count = 1;
+            String FILE = "src/main/resources";
+            File filePDF = new File(FILE);
+            String temp = "temp/"+generateUniqueFileName()+".pdf";
+            Path path = filePDF.toPath();
+            path = Paths.get(path.toString(), temp);
+            File file = new File(path.toString());
+            file.getParentFile().mkdirs();
+            while(file.exists()){
+                temp = "temp/"+generateUniqueFileName()+String.valueOf(count)+".pdf";
+                path = filePDF.toPath();
+                path = Paths.get(path.toString(), temp);
+                file = new File(path.toString());
+                file.getParentFile().mkdirs();
+                count++;
+            }
+            fileName = path.toString();
+            Document document = new Document(PageSize.A4,30, 25, 28, 27);
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+            document.open();
+            addMetaData(document);
+            Paragraph profile = addProfileInformation(technical);
+
+            String[] questionIdList = IdList.split(";");
+            List <Question> questions = getQuestionsByIdList(questionIdList);
+            Paragraph interview = new Paragraph();
+            interview = addInterviewCode(interviewCode);
+            Paragraph question = addQuestion(questions, writer);
+            interview.setAlignment(Element.ALIGN_RIGHT);
+            document.add(interview);
+            document.add(profile);
+            document.add(question);
+
+            document.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileName;
+    }
+
+    @Override
+    public String exportListAnswer(String interviewCode){
         String fileName = "";
         try {
             int count = 1;
@@ -206,11 +252,11 @@ public class FileDaoImp implements FileDao {
             addEmptyLine(preface, 1);
             // Lets write a big header
             preface.setAlignment(Element.ALIGN_RIGHT);
-            preface.add(new Paragraph("Answer List " + interviewName, catFont));
+            preface.add(new Paragraph("Answer List " + interviewCode, catFont));
             //Lets write profile information
             addEmptyLine(preface, 1);
             document.add(preface);
-            PdfPTable listAnswer = addAnswerList(interviewName);
+            PdfPTable listAnswer = addAnswerList(interviewCode);
             document.add(listAnswer);
             document.close();
         } catch (Exception e) {
@@ -218,11 +264,25 @@ public class FileDaoImp implements FileDao {
         }
         return fileName;
     }
-    private PdfPTable addAnswerList(String interviewName) throws DocumentException, IOException{
+
+    private List<Question> getQuestionsByIdList(String[] questionList){
+        Session session = this.manager.getSessionFactory().getCurrentSession();
+        List<Question> listQuestions = new ArrayList<Question>();
+        for(String questionId : questionList) {
+            int id;
+            if(!StringUtils.isEmpty(questionId.trim())){
+                id = Integer.parseInt(questionId.trim());
+                listQuestions.add(this.questionService.getQuestionById(id));
+            }
+        }
+        return listQuestions;
+    }
+
+    private PdfPTable addAnswerList(String interviewCode) throws DocumentException, IOException{
 
         Session session = this.manager.getSessionFactory().getCurrentSession();
         Criteria interviewCriteria = session.createCriteria(Interview.class);
-        interviewCriteria.add(Restrictions.eq("interviewName", interviewName));
+        interviewCriteria.add(Restrictions.eq("interviewCode", interviewCode));
         List<Interview> interview = interviewCriteria.list();
         PdfPTable table = new PdfPTable(2);
         if(interview.size() > 0){
@@ -348,7 +408,8 @@ public class FileDaoImp implements FileDao {
                     addSingleAnswerQuestion(preface, i+1, questions.get(rand).getQuestionText(), questions.get(rand).getAnswer());
                     break;
                 case 2:
-                    addMultipleAnswerQuestion(preface, i+1, writer, questions.get(rand).getQuestionText(), questions.get(rand).getAnswer());
+//                    addMultipleAnswerQuestion(preface, i+1, writer, questions.get(rand).getQuestionText(), questions.get(rand).getAnswer());
+                    addSingleAnswerQuestion(preface, i+1, questions.get(rand).getQuestionText(), questions.get(rand).getAnswer());
                     break;
                 case 3:
                     addShortQuestion(preface, i+1, questions.get(rand).getQuestionText(), questions.get(rand).getAnswer());
@@ -361,9 +422,17 @@ public class FileDaoImp implements FileDao {
         return preface;
     }
 
-    private Paragraph addInterview(List<Question> questions, PdfWriter writer ,String interviewName) throws DocumentException, IOException{
+    private Paragraph addInterviewCode(String interviewCode) throws DocumentException, IOException{
         BaseFont bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         Font normalFont = new Font(bf, 12, Font.BOLD);
+        Paragraph preface = new Paragraph();
+        addEmptyLine(preface, 1);
+        preface.setAlignment(Element.ALIGN_RIGHT);
+        preface.add(new Paragraph(interviewCode, normalFont));
+
+        return preface;
+    }
+    private Paragraph addInterview(List<Question> questions, PdfWriter writer ,String interviewName, String categoryName, String description) throws DocumentException, IOException{
         StringBuilder questionIdList = new StringBuilder();
         StringBuilder answerList = new StringBuilder();
         Paragraph preface = new Paragraph();
@@ -390,12 +459,19 @@ public class FileDaoImp implements FileDao {
             numberInterview = toIntExact((Long) result.get(0));
         }
         numberInterview++;
-        preface.add(new Paragraph(interviewName+String.valueOf(numberInterview), normalFont));
+        Date dNow = new Date();
+        SimpleDateFormat ft = new SimpleDateFormat("yyMMddhhmmssMs");
+        String datetime = ft.format(dNow);
+        String interviewCode = "VQIP" + datetime + "N" + numberInterview;
         Interview interview = new Interview();
-        interview.setInterviewName(interviewName+ String.valueOf(numberInterview));
+        interview.setInterviewCode(interviewCode);
+        interview.setInterviewName(interviewName);
         interview.setQuestionList(questionIdList.toString());
         interview.setAnswerList(answerList.toString());
+        interview.setCategoryName(categoryName);
+        interview.setDescription(description);
         this.interviewService.add(interview);
+        preface = this.addInterviewCode(interviewCode);
         return preface;
     }
     private static void addEmptyLine(Paragraph paragraph, int number) {
@@ -472,7 +548,6 @@ public class FileDaoImp implements FileDao {
                 categoryCriteria1 = questionCriteria1.createCriteria("categoryId");
                 answerCriteria1 = questionCriteria1.createCriteria("answer");
                 categoryCriteria1.add(Restrictions.eq("categoryName", technical));
-                questionCriteria1.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 questionCriteria1.setFirstResult(index).setMaxResults(5);
                 List a = questionCriteria1.list();
                 listQuestions.addAll(a);

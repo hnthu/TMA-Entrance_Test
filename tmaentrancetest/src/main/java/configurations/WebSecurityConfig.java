@@ -44,6 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/updatekind/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/addkind").permitAll()
                 .antMatchers(HttpMethod.GET, "/getallquestions").permitAll()
+                .antMatchers(HttpMethod.GET, "/getQuestionsByProgrammingLanguage/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/getquestionbyid/*").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/deletequestion/*").permitAll()
                 .antMatchers(HttpMethod.PUT, "/updatequestion/*").permitAll()
@@ -59,8 +60,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/updateinterview/*").permitAll()
                 .antMatchers(HttpMethod.POST, "/addinterview").permitAll()
                 .antMatchers(HttpMethod.POST, "/uploadfile").permitAll()
-                .antMatchers(HttpMethod.GET, "/exportPDF/*/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/exportRandomExamination").permitAll()
                 .antMatchers(HttpMethod.GET, "/exportanswerPDF/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/exportExamByInterviewCode").permitAll()
 
                 .anyRequest().authenticated()
                 .and()

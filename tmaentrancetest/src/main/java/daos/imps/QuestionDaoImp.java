@@ -2,8 +2,10 @@ package daos.imps;
 
 import daos.QuestionDao;
 import models.Question;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -35,15 +37,28 @@ public class QuestionDaoImp implements QuestionDao {
         return null;
     }
 
+    public List<Question> getQuestionsByProgrammingLanguage(String technical){
+        Session session = this.manager.getSessionFactory().getCurrentSession();
+        Criteria questionCriteria1 = session.createCriteria(Question.class);
+        Criteria categoryCriteria1 = questionCriteria1.createCriteria("categoryId");
+        categoryCriteria1.add(Restrictions.eq("categoryName", technical));
+        questionCriteria1.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        List<Question> questionList = questionCriteria1.list();
+        for (Question p : questionList) {
+            logger.info("Question List:" + p);
+        }
+        return questionList;
+    };
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Question> getAll() {
         Session session = this.manager.getSessionFactory().getCurrentSession();
-        List<Question> questionTypeList = session.createQuery("from Question").list();
-        for (Question p : questionTypeList) {
+        List<Question> questionList = session.createQuery("from Question").list();
+        for (Question p : questionList) {
             logger.info("Question List:" + p);
         }
-        return questionTypeList;
+        return questionList;
     }
 
     @Override

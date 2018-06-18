@@ -49,8 +49,8 @@ public class FileServiceImp implements FileService {
 
     @Override
     @Transactional
-    public String exportPDF(String technical, String interviewName){
-        return this.fileDao.exportPDF(technical, interviewName);
+    public String exportRandomExamination(String technical, String interviewName, String description){
+        return this.fileDao.exportRandomExamination(technical, interviewName, description);
     }
 
     @Override
@@ -58,4 +58,11 @@ public class FileServiceImp implements FileService {
     public String exportListAnswer(String interviewName){
         return this.fileDao.exportListAnswer(interviewName);
     }
+
+    @Override
+    @Transactional
+    public String exportExamByInterviewCode(String technical, String interviewCode, String questionList){
+        return this.fileDao.exportExamByInterviewCode(technical, interviewCode, questionList);
+    }
+
 }

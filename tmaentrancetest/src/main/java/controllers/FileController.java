@@ -66,9 +66,9 @@ public class FileController {
 
     }
 
-    @RequestMapping(value = "/exportPDF/{technical}/{interviewName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public  void exportPDF(HttpServletResponse response, @PathVariable("technical") String technical, @PathVariable("interviewName") String interviewName) throws IOException{
-        String fileName = this.fileService.exportPDF(technical, interviewName);
+    @RequestMapping(value = "/exportRandomExamination", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public  void exportRandomExamination(@RequestParam("technical") String technical, @RequestParam("interviewName") String interviewName, @RequestParam("description") String description, HttpServletResponse response) throws IOException{
+        String fileName = this.fileService.exportRandomExamination(technical, interviewName, description);
         File file = new File(fileName);
         if(!file.exists()){
             String errorMessage = "Sorry. The file you are looking for does not exist";
@@ -101,9 +101,44 @@ public class FileController {
         }
     }
 
-    @RequestMapping(value = "/exportanswerPDF/{interviewName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public  void exportAnswerPDF(HttpServletResponse response, @PathVariable("interviewName") String interviewName) throws IOException{
-        String fileName = this.fileService.exportListAnswer(interviewName);
+    @RequestMapping(value = "/exportExamByInterviewCode", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public  void exportExamByInterviewCode(@RequestParam("technical") String technical,@RequestParam("interviewCode") String interviewCode, @RequestParam("questionList") String questionList, HttpServletResponse response) throws IOException{
+        String fileName =  this.fileService.exportExamByInterviewCode(technical, interviewCode, questionList);
+        File file = new File(fileName);
+        if(!file.exists()){
+            String errorMessage = "Sorry. The file you are looking for does not exist";
+            System.out.println(errorMessage);
+            OutputStream outputStream = response.getOutputStream();
+            outputStream.write(errorMessage.getBytes(Charset.forName("UTF-8")));
+            outputStream.close();
+            return;
+        }
+
+        String mimeType= URLConnection.guessContentTypeFromName(file.getName());
+        if(mimeType==null){
+            System.out.println("mimetype is not detectable, will take default");
+            mimeType = "application/pdf";
+        }
+
+        System.out.println("mimetype : "+mimeType);
+
+        response.setContentType(mimeType);
+
+        response.setHeader("Content-Disposition", String.format("inline; filename=\"" + file.getName() +"\""));
+
+        response.setContentLength((int)file.length());
+
+        InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+
+        FileCopyUtils.copy(inputStream, response.getOutputStream());
+        if(file.exists()){
+            file.delete();
+        }
+    }
+
+    @RequestMapping(value = "/exportanswerPDF/{interviewCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public  void exportAnswerPDF(HttpServletResponse response, @PathVariable("interviewCode") String interviewCode) throws IOException{
+        String fileName = this.fileService.exportListAnswer(interviewCode);
         File file = new File(fileName);
         if(!file.exists()){
             String errorMessage = "Sorry. The file you are looking for does not exist";
