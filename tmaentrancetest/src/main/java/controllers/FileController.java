@@ -11,8 +11,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import services.AnswerService;
 import services.FileService;
@@ -171,5 +173,9 @@ public class FileController {
         }
     }
 
-
+        @ExceptionHandler({ AccessDeniedException.class })
+        public ResponseEntity<Object> handleAccessDeniedException(Exception ex, WebRequest request) {
+            return new ResponseEntity<Object>(
+                    "Access denied message here", new HttpHeaders(), HttpStatus.FORBIDDEN);
+        }
 }
