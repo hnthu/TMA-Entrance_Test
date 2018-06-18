@@ -4,10 +4,12 @@ import models.Interview;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import services.InterviewService;
 
 @RestController
+@PreAuthorize("hasAnyRole(\"ROLE_USER\",\"ROLE_ADMIN\")")
 public class InterviewController {
     protected final Logger logger2 = LogManager.getLogger();
     private InterviewService interviewService;

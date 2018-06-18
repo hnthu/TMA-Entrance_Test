@@ -6,12 +6,14 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import services.UserService;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class UserController {
     protected final Logger logger2 = LogManager.getLogger();
     private UserService userService;
@@ -28,7 +30,6 @@ public class UserController {
         logger2.error("is running get all user in the database.");
         return userService.getAll();
     }
-
     @RequestMapping(value = "/getuserbyid/{id}", method = RequestMethod.GET)
     public Object getUserById(@PathVariable("id") int id) {
         return userService.getUserById(id);

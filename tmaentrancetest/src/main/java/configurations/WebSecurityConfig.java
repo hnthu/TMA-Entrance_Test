@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
@@ -40,44 +41,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/getallusers").permitAll()
-                .antMatchers(HttpMethod.GET, "/getuserbyid/*").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/delete/*").permitAll()
-                .antMatchers(HttpMethod.PUT, "/update/*").permitAll()
-                .antMatchers(HttpMethod.POST, "/add").permitAll()
-                .antMatchers(HttpMethod.GET, "/getallcategories").permitAll()
-                .antMatchers(HttpMethod.GET, "/getcategorybyid/*").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/deletecategory/*").permitAll()
-                .antMatchers(HttpMethod.PUT, "/updatecategory/*").permitAll()
-                .antMatchers(HttpMethod.POST, "/addcategory").permitAll()
-                .antMatchers(HttpMethod.GET, "/getallkinds").permitAll()
-                .antMatchers(HttpMethod.GET, "/getkindbyid/*").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/deletekind/*").permitAll()
-                .antMatchers(HttpMethod.PUT, "/updatekind/*").permitAll()
-                .antMatchers(HttpMethod.POST, "/addkind").permitAll()
-                .antMatchers(HttpMethod.GET, "/getallquestions").permitAll()
-                .antMatchers(HttpMethod.GET, "/getQuestionsByProgrammingLanguage/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/getquestionbyid/*").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/deletequestion/*").permitAll()
-                .antMatchers(HttpMethod.PUT, "/updatequestion/*").permitAll()
-                .antMatchers(HttpMethod.POST, "/addquestion").permitAll()
-                .antMatchers(HttpMethod.GET, "/getallanswers").permitAll()
-                .antMatchers(HttpMethod.GET, "/getanswerbyid/*").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/deleteanswer/*").permitAll()
-                .antMatchers(HttpMethod.PUT, "/updateanswer/*").permitAll()
-                .antMatchers(HttpMethod.POST, "/addanswer").permitAll()
-                .antMatchers(HttpMethod.GET, "/getallinterviews").permitAll()
-                .antMatchers(HttpMethod.GET, "/getinterviewbyid/*").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/deleteinterview/*").permitAll()
-                .antMatchers(HttpMethod.PUT, "/updateinterview/*").permitAll()
-                .antMatchers(HttpMethod.POST, "/addinterview").permitAll()
-                .antMatchers(HttpMethod.POST, "/uploadfile").permitAll()
-                .antMatchers(HttpMethod.POST, "/exportRandomExamination").permitAll()
-                .antMatchers(HttpMethod.GET, "/exportanswerPDF/*").permitAll()
-                .antMatchers(HttpMethod.POST, "/exportExamByInterviewCode").permitAll()
-
                 .anyRequest().authenticated()
                 .and()
+                .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class)
                 .addFilterBefore(new JWTLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
