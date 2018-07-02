@@ -4,6 +4,9 @@ import models.Kind;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import services.KindService;
@@ -21,9 +24,6 @@ public class KindController {
 
     @RequestMapping(value = "/getallkinds", method = RequestMethod.GET)
     public Object getAllQuestionTypes() {
-        logger2.info("is running get all user in the database.");
-        logger2.debug("is running get all user in the database.");
-        logger2.error("is running get all user in the database.");
         return kindService.getAll();
     }
 
@@ -33,26 +33,26 @@ public class KindController {
     }
 
     @RequestMapping(value ="/deletekind/{id}", method = RequestMethod.DELETE)
-    public String deleteQuestionType(@PathVariable("id") int id){
+    public ResponseEntity<?> deleteQuestionType(@PathVariable("id") int id){
         Kind existingQuestionType = this.kindService.getKindById(id);
         if(existingQuestionType != null){
             this.kindService.delete(id);
         }
-        return "Deleted Successfully";
+        return new ResponseEntity("Deleted Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/updatekind/{id}", method = RequestMethod.PUT)
-    public Object updateQuestionType(@PathVariable("id") int id,  @RequestBody Kind updateUser){
+    public  ResponseEntity<?> updateQuestionType(@PathVariable("id") int id,  @RequestBody Kind updateUser){
         Kind currentQuestionType = this.kindService.getKindById(id);
         if(currentQuestionType != null){
             this.kindService.update(updateUser);
         }
-        return "Updated successfully";
+        return new ResponseEntity("Updated Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addkind", method = RequestMethod.POST)
-    public String addQuestionType(@RequestBody Kind addKind){
+    public  ResponseEntity<?> addQuestionType(@RequestBody Kind addKind){
         this.kindService.add(addKind);
-        return "Added successfully";
+        return new ResponseEntity("Added Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 }

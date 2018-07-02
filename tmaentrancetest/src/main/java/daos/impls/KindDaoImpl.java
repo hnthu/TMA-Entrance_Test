@@ -1,4 +1,4 @@
-package daos.imps;
+package daos.impls;
 
 import daos.KindDao;
 import models.Kind;
@@ -14,8 +14,8 @@ import java.util.List;
 
 @Repository
 @Transactional
-public class KindDaoImp implements KindDao{
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KindDaoImp.class);
+public class KindDaoImpl implements KindDao{
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KindDaoImpl.class);
     private SessionFactory sessionFactory;
 
     @Autowired

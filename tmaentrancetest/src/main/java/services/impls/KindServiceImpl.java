@@ -1,4 +1,4 @@
-package services.imps;
+package services.impls;
 
 import daos.KindDao;
 import models.Kind;
@@ -10,7 +10,7 @@ import services.KindService;
 import java.util.List;
 
 @Service
-public class KindServiceImp implements KindService {
+public class KindServiceImpl implements KindService {
     private KindDao kindDao;
 
     @Autowired

@@ -1,4 +1,4 @@
-package services.imps;
+package services.impls;
 
 import daos.AnswerDao;
 import models.Answer;
@@ -10,7 +10,7 @@ import services.AnswerService;
 import java.util.List;
 
 @Service
-public class AnswerServiceImp implements AnswerService{
+public class AnswerServiceImpl implements AnswerService{
     private AnswerDao answerDao;
 
     @Autowired

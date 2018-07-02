@@ -1,4 +1,4 @@
-package daos.imps;
+package daos.impls;
 
 import daos.UserDao;
 import models.User;
@@ -15,9 +15,9 @@ import javax.transaction.Transactional;
 
 @Repository
 @Transactional
-public class UserDaoImp implements UserDao {
+public class UserDaoImpl implements UserDao {
 
-    private static final org.slf4j.Logger logger =  LoggerFactory.getLogger(UserDaoImp.class);
+    private static final org.slf4j.Logger logger =  LoggerFactory.getLogger(UserDaoImpl.class);
     private SessionFactory sessionFactory;
 
     @Autowired

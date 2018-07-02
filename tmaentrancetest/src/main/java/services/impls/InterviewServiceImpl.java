@@ -1,4 +1,4 @@
-package services.imps;
+package services.impls;
 
 import daos.InterViewDao;
 import models.Interview;
@@ -10,7 +10,7 @@ import services.InterviewService;
 import java.util.List;
 
 @Service
-public class InterviewServiceImp implements InterviewService{
+public class InterviewServiceImpl implements InterviewService{
     private InterViewDao interviewDao;
 
     @Autowired

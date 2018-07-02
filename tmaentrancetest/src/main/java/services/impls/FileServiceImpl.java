@@ -1,4 +1,4 @@
-package services.imps;
+package services.impls;
 
 import daos.FileDao;
 import models.Answer;
@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-public class FileServiceImp implements FileService {
+public class FileServiceImpl implements FileService {
     private FileDao fileDao;
 
     @Autowired

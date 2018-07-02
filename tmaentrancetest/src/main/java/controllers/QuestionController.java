@@ -4,6 +4,9 @@ import models.Question;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import services.QuestionService;
@@ -38,26 +41,26 @@ public class QuestionController {
     }
 
     @RequestMapping(value ="/deletequestion/{id}", method = RequestMethod.DELETE)
-    public String deleteQuestion(@PathVariable("id") int id){
+    public ResponseEntity<?> deleteQuestion(@PathVariable("id") int id){
         Question existingQuestion = this.questionService.getQuestionById(id);
         if(existingQuestion != null){
             this.questionService.delete(id);
         }
-        return "Deleted Successfully";
+        return new ResponseEntity("Deleted Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/updatequestion/{id}", method = RequestMethod.PUT)
-    public Object updateQuestion(@PathVariable("id") int id,  @RequestBody Question updateUser){
+    public ResponseEntity<?> updateQuestion(@PathVariable("id") int id,  @RequestBody Question updateUser){
         Question currentQuestion = this.questionService.getQuestionById(id);
         if(currentQuestion != null){
             this.questionService.update(updateUser);
         }
-        return "Updated successfully";
+        return new ResponseEntity("Updated Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addquestion", method = RequestMethod.POST)
-    public String addQuestion(@RequestBody Question addQuestion){
+    public ResponseEntity<?> addQuestion(@RequestBody Question addQuestion){
         this.questionService.add(addQuestion);
-        return "Added successfully";
+        return new ResponseEntity("Added Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 }

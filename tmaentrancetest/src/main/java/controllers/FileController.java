@@ -71,7 +71,7 @@ public class FileController {
     }
 
     @RequestMapping(value = "/exportRandomExamination", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public  void exportRandomExamination(@RequestParam("technical") String technical, @RequestParam("interviewName") String interviewName, @RequestParam("description") String description, HttpServletResponse response) throws IOException{
+    public ResponseEntity<?> exportRandomExamination(@RequestParam("technical") String technical, @RequestParam("interviewName") String interviewName, @RequestParam("description") String description, HttpServletResponse response) throws IOException{
         String fileName = this.fileService.exportRandomExamination(technical, interviewName, description);
         File file = new File(fileName);
         if(!file.exists()){
@@ -80,7 +80,7 @@ public class FileController {
             OutputStream outputStream = response.getOutputStream();
             outputStream.write(errorMessage.getBytes(Charset.forName("UTF-8")));
             outputStream.close();
-            return;
+            return new ResponseEntity("Export Successfully", new HttpHeaders(), HttpStatus.OK);
         }
 
         String mimeType= URLConnection.guessContentTypeFromName(file.getName());
@@ -103,10 +103,11 @@ public class FileController {
         if(file.exists()){
             file.delete();
         }
+        return new ResponseEntity("Export Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/exportExamByInterviewCode", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public  void exportExamByInterviewCode(@RequestParam("technical") String technical,@RequestParam("interviewCode") String interviewCode, @RequestParam("questionList") String questionList, HttpServletResponse response) throws IOException{
+    public  ResponseEntity<?> exportExamByInterviewCode(@RequestParam("technical") String technical,@RequestParam("interviewCode") String interviewCode, @RequestParam("questionList") String questionList, HttpServletResponse response) throws IOException{
         String fileName =  this.fileService.exportExamByInterviewCode(technical, interviewCode, questionList);
         File file = new File(fileName);
         if(!file.exists()){
@@ -115,7 +116,7 @@ public class FileController {
             OutputStream outputStream = response.getOutputStream();
             outputStream.write(errorMessage.getBytes(Charset.forName("UTF-8")));
             outputStream.close();
-            return;
+            return new ResponseEntity("", new HttpHeaders(), HttpStatus.NOT_FOUND);
         }
 
         String mimeType= URLConnection.guessContentTypeFromName(file.getName());
@@ -138,10 +139,11 @@ public class FileController {
         if(file.exists()){
             file.delete();
         }
+        return new ResponseEntity("Export Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/exportanswerPDF/{interviewCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public  void exportAnswerPDF(HttpServletResponse response, @PathVariable("interviewCode") String interviewCode) throws IOException{
+    public  ResponseEntity<?> exportAnswerPDF(HttpServletResponse response, @PathVariable("interviewCode") String interviewCode) throws IOException{
         String fileName = this.fileService.exportListAnswer(interviewCode);
         File file = new File(fileName);
         if(!file.exists()){
@@ -150,7 +152,7 @@ public class FileController {
             OutputStream outputStream = response.getOutputStream();
             outputStream.write(errorMessage.getBytes(Charset.forName("UTF-8")));
             outputStream.close();
-            return;
+            return new ResponseEntity("", new HttpHeaders(), HttpStatus.NOT_FOUND);
         }
 
         String mimeType= URLConnection.guessContentTypeFromName(file.getName());
@@ -173,6 +175,8 @@ public class FileController {
         if(file.exists()){
             file.delete();
         }
+        return new ResponseEntity("Export Successfully", new HttpHeaders(), HttpStatus.OK);
+
     }
 
         @ExceptionHandler({ AccessDeniedException.class })

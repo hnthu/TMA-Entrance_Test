@@ -4,6 +4,7 @@ import models.Answer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,26 +35,26 @@ public class AnswerController {
     }
 
     @RequestMapping(value ="/deleteanswer/{id}", method = RequestMethod.DELETE)
-    public String deleteAnswer(@PathVariable("id") int id){
+    public ResponseEntity<?> deleteAnswer(@PathVariable("id") int id){
         Answer existingAnswer = this.answerService.getAnswerById(id);
         if(existingAnswer != null){
             this.answerService.delete(id);
         }
-        return "Deleted Successfully";
+        return new ResponseEntity("Deleted Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/updateanswer/{id}", method = RequestMethod.PUT)
-    public Object updateAnswer(@PathVariable("id") int id,  @RequestBody Answer updateAnswer){
+    public ResponseEntity<?> updateAnswer(@PathVariable("id") int id,  @RequestBody Answer updateAnswer){
         Answer currentAnswer = this.answerService.getAnswerById(id);
         if(currentAnswer != null){
             this.answerService.update(updateAnswer);
         }
-        return "Updated successfully";
+        return new ResponseEntity("Updated Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addanswer", method = RequestMethod.POST)
-    public String addAnswer(@RequestBody Answer addAnswer){
+    public ResponseEntity<?> addAnswer(@RequestBody Answer addAnswer){
         this.answerService.add(addAnswer);
-        return "Added successfully";
+        return new ResponseEntity("Added Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 }

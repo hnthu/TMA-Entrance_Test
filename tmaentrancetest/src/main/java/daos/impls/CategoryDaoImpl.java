@@ -1,4 +1,4 @@
-package daos.imps;
+package daos.impls;
 import com.google.gson.Gson;
 import daos.CategoryDao;
 import models.Category;
@@ -20,8 +20,8 @@ import javax.transaction.Transactional;
 
 @Repository
 @Transactional
-public class CategoryDaoImp implements CategoryDao {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CategoryDaoImp.class);
+public class CategoryDaoImpl implements CategoryDao {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CategoryDaoImpl.class);
     private SessionFactory sessionFactory;
 
     @Autowired

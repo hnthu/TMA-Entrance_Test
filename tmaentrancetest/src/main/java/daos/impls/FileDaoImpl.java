@@ -1,4 +1,4 @@
-package daos.imps;
+package daos.impls;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
@@ -38,7 +38,7 @@ import services.QuestionService;
 
 @Repository
 @Transactional
-public class FileDaoImp implements FileDao {
+public class FileDaoImpl implements FileDao {
     private static final String FONT = "/fonts/times.ttf";
     @Autowired
     private CategoryService categoryService;
@@ -58,7 +58,7 @@ public class FileDaoImp implements FileDao {
             {"Phone:.............................................................................", "End time:......................................................"}
     };
 
-    public FileDaoImp() throws IOException, DocumentException {
+    public FileDaoImpl() throws IOException, DocumentException {
     }
 
     @Override

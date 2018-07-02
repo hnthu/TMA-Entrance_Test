@@ -1,4 +1,4 @@
-package services.imps;
+package services.impls;
 import daos.CategoryDao;
 import models.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,7 @@ import services.CategoryService;
 import java.util.List;
 
 @Service
-public class CategoryServiceImp implements CategoryService{
+public class CategoryServiceImpl implements CategoryService{
     private CategoryDao categoryDao;
 
     @Autowired

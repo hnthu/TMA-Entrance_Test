@@ -1,4 +1,4 @@
-package services.imps;
+package services.impls;
 
 import daos.UserDao;
 import models.User;
@@ -9,7 +9,7 @@ import services.UserService;
 import java.util.List;
 
 @Service
-public class UserServiceImp implements UserService {
+public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Autowired

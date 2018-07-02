@@ -1,6 +1,7 @@
-package daos.imps;
+package daos.impls;
 
 import daos.InterViewDao;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.stereotype.Repository;
@@ -13,8 +14,8 @@ import javax.transaction.Transactional;
 
 @Repository
 @Transactional
-public class InterviewDaoImp implements InterViewDao{
-    private static final org.slf4j.Logger logger =  LoggerFactory.getLogger(InterviewDaoImp.class);
+public class InterviewDaoImpl implements InterViewDao{
+    private static final org.slf4j.Logger logger =  LoggerFactory.getLogger(InterviewDaoImpl.class);
     private SessionFactory sessionFactory;
 
     @Autowired
@@ -66,4 +67,6 @@ public class InterviewDaoImp implements InterViewDao{
         }
         logger.info("Interview deleted successfully, Interview details="+p);
     }
+
+
 }

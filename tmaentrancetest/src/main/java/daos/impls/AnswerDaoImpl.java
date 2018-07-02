@@ -1,4 +1,4 @@
-package daos.imps;
+package daos.impls;
 
 import daos.AnswerDao;
 import models.Answer;
@@ -14,8 +14,8 @@ import java.util.List;
 
 @Repository
 @Transactional
-public class AnswerDaoImp implements AnswerDao {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AnswerDaoImp.class);
+public class AnswerDaoImpl implements AnswerDao {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(AnswerDaoImpl.class);
     private SessionFactory sessionFactory;
 
     @Autowired

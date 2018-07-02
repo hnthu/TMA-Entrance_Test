@@ -4,6 +4,9 @@ import models.Interview;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import services.InterviewService;
@@ -21,9 +24,6 @@ public class InterviewController {
 
     @RequestMapping(value = "/getallinterviews", method = RequestMethod.GET)
     public Object getAllInterviews() {
-        logger2.info("is running get all Interview in the database.");
-        logger2.debug("is running get all Interview in the database.");
-        logger2.error("is running get all Interview in the database.");
         return interviewService.getAll();
     }
 
@@ -33,26 +33,28 @@ public class InterviewController {
     }
 
     @RequestMapping(value ="/deleteinterview/{id}", method = RequestMethod.DELETE)
-    public String deleteInterview(@PathVariable("id") int id){
+    public ResponseEntity<?> deleteInterview(@PathVariable("id") int id){
         Interview existingInterview = this.interviewService.getInterviewById(id);
         if(existingInterview != null){
             this.interviewService.delete(id);
         }
-        return "Deleted Successfully";
+        return new ResponseEntity("Deleted Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/updateinterview/{id}", method = RequestMethod.PUT)
-    public Object updateInterview(@PathVariable("id") int id,  @RequestBody Interview updateInterview){
+    public ResponseEntity<?> updateInterview(@PathVariable("id") int id,  @RequestBody Interview updateInterview){
         Interview currentInterview = this.interviewService.getInterviewById(id);
         if(currentInterview != null){
             this.interviewService.update(updateInterview);
         }
-        return "Updated successfully";
+        return new ResponseEntity("Updated Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addinterview", method = RequestMethod.POST)
-    public String addInterview(@RequestBody Interview addInterview){
+    public ResponseEntity<?> addInterview(@RequestBody Interview addInterview){
         this.interviewService.add(addInterview);
-        return "Added successfully";
+        return new ResponseEntity("Added Successfully", new HttpHeaders(), HttpStatus.OK);
     }
+
+
 }

@@ -5,6 +5,9 @@ import models.Category;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import services.CategoryService;
@@ -22,9 +25,6 @@ public class CategoryController {
 
     @RequestMapping(value = "/getallcategories", method = RequestMethod.GET)
     public Object getAllCategories() {
-        logger2.info("is running get all Category in the database.");
-        logger2.debug("is running get all Category in the database.");
-        logger2.error("is running get all Category in the database.");
         return categoryService.getAll();
     }
 
@@ -34,26 +34,26 @@ public class CategoryController {
     }
 
     @RequestMapping(value ="/deletecategory/{id}", method = RequestMethod.DELETE)
-    public String deleteCategory(@PathVariable("id") int id){
+    public ResponseEntity<?> deleteCategory(@PathVariable("id") int id){
         Category existingCategory = this.categoryService.getCategoryById(id);
         if(existingCategory != null){
             this.categoryService.delete(id);
         }
-        return "Deleted Successfully";
+        return new ResponseEntity("Deleted Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/updatecategory/{id}", method = RequestMethod.PUT)
-    public Object updateCategory(@PathVariable("id") int id,  @RequestBody Category updateCategory){
+    public  ResponseEntity<?> updateCategory(@PathVariable("id") int id,  @RequestBody Category updateCategory){
         Category currentCategory = this.categoryService.getCategoryById(id);
         if(currentCategory != null){
             this.categoryService.update(updateCategory);
         }
-        return "Updated successfully";
+        return new ResponseEntity("Updated Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/addcategory", method = RequestMethod.POST)
-    public String addCategory(@RequestBody Category addCategory){
+    public  ResponseEntity<?> addCategory(@RequestBody Category addCategory){
         this.categoryService.add(addCategory);
-        return "Added successfully";
+        return new ResponseEntity("Added Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 }

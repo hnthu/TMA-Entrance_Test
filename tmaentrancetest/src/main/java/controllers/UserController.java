@@ -6,6 +6,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import services.UserService;
@@ -25,9 +28,6 @@ public class UserController {
 
     @RequestMapping(value = "/getallusers", method = RequestMethod.GET)
     public Object getAllUsers() {
-        logger2.info("is running get all user in the database.");
-        logger2.debug("is running get all user in the database.");
-        logger2.error("is running get all user in the database.");
         return userService.getAll();
     }
     @RequestMapping(value = "/getuserbyid/{id}", method = RequestMethod.GET)
@@ -36,26 +36,26 @@ public class UserController {
     }
 
     @RequestMapping(value ="/delete/{id}", method = RequestMethod.DELETE)
-    public String deleteUser(@PathVariable("id") int id){
+    public ResponseEntity<?> deleteUser(@PathVariable("id") int id){
         User existingUser = this.userService.getUserById(id);
         if(existingUser != null){
             this.userService.delete(id);
         }
-        return "Deleted Successfully";
+        return new ResponseEntity("Delete Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
-    public Object updateUser(@PathVariable("id") int id,  @RequestBody User updateUser){
+    public ResponseEntity<?> updateUser(@PathVariable("id") int id,  @RequestBody User updateUser){
         User currentUser = this.userService.getUserById(id);
         if(currentUser != null){
             this.userService.update(updateUser);
         }
-        return "Updated successfully";
+        return new ResponseEntity("Updated successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String addUser(@RequestBody User addUser){
+    public ResponseEntity<?> addUser(@RequestBody User addUser){
         this.userService.add(addUser);
-        return "Added successfully";
+        return new ResponseEntity("Added successfully", new HttpHeaders(), HttpStatus.OK);
     }
 }
