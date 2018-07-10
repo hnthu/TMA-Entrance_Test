@@ -16,6 +16,7 @@ import services.UserService;
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "/v1")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class UserController {
     protected final Logger logger2 = LogManager.getLogger();
@@ -26,16 +27,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "/getallusers", method = RequestMethod.GET)
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
     public Object getAllUsers() {
         return userService.getAll();
     }
-    @RequestMapping(value = "/getuserbyid/{id}", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/users/{id}", method = RequestMethod.GET)
     public Object getUserById(@PathVariable("id") int id) {
         return userService.getUserById(id);
     }
 
-    @RequestMapping(value ="/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value ="/users/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable("id") int id){
         User existingUser = this.userService.getUserById(id);
         if(existingUser != null){
@@ -44,16 +46,16 @@ public class UserController {
         return new ResponseEntity("Delete Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/update/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@PathVariable("id") int id,  @RequestBody User updateUser){
-        User currentUser = this.userService.getUserById(id);
+    @RequestMapping(value = "/users", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateUser(@RequestBody User updateUser){
+        User currentUser = this.userService.getUserById(updateUser.getId());
         if(currentUser != null){
             this.userService.update(updateUser);
         }
         return new ResponseEntity("Updated successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ResponseEntity<?> addUser(@RequestBody User addUser){
         this.userService.add(addUser);
         return new ResponseEntity("Added successfully", new HttpHeaders(), HttpStatus.OK);

@@ -13,12 +13,10 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "questionId", nullable = false)
     private int questionId;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoryId", nullable = false)
-    @JsonIgnore
     private Category categoryId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "kindId", nullable = false)
     private Kind kindId;
     @Column(name = "questionText", nullable = false)
@@ -27,21 +25,20 @@ public class Question {
     private String correctAnswer;
     @Column(name = "hardLevel", nullable = false)
     private int hardLevel;
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "question", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Answer answer;
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "question", cascade = CascadeType.ALL)
+    private Answer answerId;
 
     public Question() {
     }
 
-    public Question(int questionId, Category categoryId, Kind kindId, String questionText, String correctAnswer, int level, Answer answer) {
+    public Question(int questionId, Category categoryId, Kind kindId, String questionText, String correctAnswer, int level, Answer answerId) {
         this.questionId = questionId;
         this.categoryId = categoryId;
         this.kindId = kindId;
         this.questionText = questionText;
         this.correctAnswer = correctAnswer;
         this.hardLevel = level;
-        this.answer = answer;
+        this.answerId = answerId;
     }
 
     public int getQuestionId() {
@@ -52,19 +49,19 @@ public class Question {
         this.questionId = questionId;
     }
 
-    public Category getCategoryId() {
+    public Category getCategory() {
         return categoryId;
     }
 
-    public void setCategoryId(Category categoryId) {
+    public void setCategory(Category categoryId) {
         this.categoryId = categoryId;
     }
 
-    public Kind getKindId() {
+    public Kind getKind() {
         return kindId;
     }
 
-    public void setKindId(Kind kindId) {
+    public void setKind(Kind kindId) {
         this.kindId = kindId;
     }
 
@@ -88,28 +85,16 @@ public class Question {
         return hardLevel;
     }
 
-    public void setLevel(int level) {
-        this.hardLevel = level;
+    public void setLevel(int hardLevel) {
+        this.hardLevel = hardLevel;
     }
 
     public Answer getAnswer() {
-        return answer;
+        return answerId;
     }
 
-    public void setAnswer(Answer answer) {
-        this.answer = answer;
+    public void setAnswer(Answer answerId) {
+        this.answerId = answerId;
     }
 
-//    @Override
-//    public String toString() {
-//        return "Question{" +
-//                "questionId=" + questionId +
-//                ", categoryId=" + categoryId +
-//                ", kindId=" + kindId +
-//                ", questionText='" + questionText + '\'' +
-//                ", correctAnswer=" + correctAnswer +
-//                ", hardLevel=" + hardLevel +
-//                ", answer=" + answer +
-//                '}';
-//    }
 }

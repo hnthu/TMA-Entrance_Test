@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
+@RequestMapping(value = "/v1")
 @PreAuthorize("hasAnyRole(\"ROLE_USER\",\"ROLE_ADMIN\")")
 public class FileController {
     protected final Logger logger2 = LogManager.getLogger();
@@ -52,7 +53,7 @@ public class FileController {
         this.answerService = answerService;
     }
 
-    @RequestMapping(value = "/uploadfile", method = RequestMethod.POST)
+    @RequestMapping(value = "/file/upload", method = RequestMethod.POST)
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile uploadfile) throws IOException, InvalidFormatException {
 
         if (uploadfile.isEmpty()) {
@@ -70,7 +71,7 @@ public class FileController {
 
     }
 
-    @RequestMapping(value = "/exportRandomExamination", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @RequestMapping(value = "/file/examination", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<?> exportRandomExamination(@RequestParam("technical") String technical, @RequestParam("interviewName") String interviewName, @RequestParam("description") String description, HttpServletResponse response) throws IOException{
         String fileName = this.fileService.exportRandomExamination(technical, interviewName, description);
         File file = new File(fileName);
@@ -106,8 +107,8 @@ public class FileController {
         return new ResponseEntity("Export Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/exportExamByInterviewCode", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public  ResponseEntity<?> exportExamByInterviewCode(@RequestParam("technical") String technical,@RequestParam("interviewCode") String interviewCode, @RequestParam("questionList") String questionList, HttpServletResponse response) throws IOException{
+    @RequestMapping(value = "/file/examination/interviews/{interviewCode}", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public  ResponseEntity<?> exportExamByInterviewCode(@RequestParam("technical") String technical,@PathVariable("interviewCode") String interviewCode, @RequestParam("questionList") String questionList, HttpServletResponse response) throws IOException{
         String fileName =  this.fileService.exportExamByInterviewCode(technical, interviewCode, questionList);
         File file = new File(fileName);
         if(!file.exists()){
@@ -142,7 +143,7 @@ public class FileController {
         return new ResponseEntity("Export Successfully", new HttpHeaders(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/exportanswerPDF/{interviewCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @RequestMapping(value = "/file/answerList/interviews/{interviewCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public  ResponseEntity<?> exportAnswerPDF(HttpServletResponse response, @PathVariable("interviewCode") String interviewCode) throws IOException{
         String fileName = this.fileService.exportListAnswer(interviewCode);
         File file = new File(fileName);

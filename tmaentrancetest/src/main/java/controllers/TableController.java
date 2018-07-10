@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import services.TableService;
 
 @RestController
+@RequestMapping(value = "/v1")
 @PreAuthorize("hasAnyRole(\"ROLE_USER\",\"ROLE_ADMIN\")")
 public class TableController {
     private TableService tableService;
@@ -18,7 +19,7 @@ public class TableController {
         this.tableService = tableService;
     }
 
-    @RequestMapping(value ="/deleteAllRecords", method = RequestMethod.POST)
+    @RequestMapping(value ="/records", method = RequestMethod.POST)
     public ResponseEntity<?> deleteQuestion(@RequestParam("tableName") String tableName, @RequestParam("selectedIds") int[] selectedIds){
         this.tableService.deleteAllRecord(tableName, selectedIds);
         return new ResponseEntity("Deleted Successfully", new HttpHeaders(), HttpStatus.OK);

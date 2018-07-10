@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TokenAuthenticationService {
-    static final long EXPIRATIONTIME = 1_200_000; // 10 minutes
+    static final long EXPIRATIONTIME = 12_000_000; // 100 minutes
     static final String SECRET = "ThisIsASecret";
     static final String TOKEN_PREFIX = "Bearer";
     static final String HEADER_STRING = "Authorization";

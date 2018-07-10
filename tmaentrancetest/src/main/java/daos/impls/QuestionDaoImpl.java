@@ -44,9 +44,6 @@ public class QuestionDaoImpl implements QuestionDao {
         categoryCriteria1.add(Restrictions.eq("categoryName", technical));
         questionCriteria1.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         List<Question> questionList = questionCriteria1.list();
-        for (Question p : questionList) {
-            logger.info("Question List:" + p);
-        }
         return questionList;
     };
 

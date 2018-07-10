@@ -114,8 +114,8 @@ public class FileDaoImpl implements FileDao {
 
         Question q = new Question();
         q.setQuestionId(id);
-        q.setCategoryId(cat);
-        q.setKindId(kind);
+        q.setCategory(cat);
+        q.setKind(kind);
         q.setQuestionText(QuestionText);
         q.setCorrectAnswer(CorrectAnswer);
         q.setLevel(Integer.parseInt(Level));
@@ -128,7 +128,6 @@ public class FileDaoImpl implements FileDao {
         a.setAnswerId(id);
         a.setQuestionId(QuestionId);
         a.setAnswerList(Answer);
-        a.setQuestion(Question);
         return a;
     }
 
@@ -403,7 +402,7 @@ public class FileDaoImpl implements FileDao {
         int i = 0;
         while(questions.size() > 0){
             int rand = new Random().nextInt(questions.size());
-            switch(questions.get(rand).getKindId().getKindId()){
+            switch(questions.get(rand).getKind().getKindId()){
                 case 1:
                     addSingleAnswerQuestion(preface, i+1, questions.get(rand).getQuestionText(), questions.get(rand).getAnswer());
                     break;
@@ -537,7 +536,7 @@ public class FileDaoImpl implements FileDao {
             questionCriteria1.add(Restrictions.eq("hardLevel", i));
             questionCriteria1.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             Criteria categoryCriteria1 = questionCriteria1.createCriteria("categoryId");
-            Criteria answerCriteria1 = questionCriteria1.createCriteria("answer");
+            Criteria answerCriteria1 = questionCriteria1.createCriteria("answerId");
             categoryCriteria1.add(Restrictions.eq("categoryName", technical));
             questionCriteria1.setProjection(Projections.rowCount());
             int count = ((Number) questionCriteria1.uniqueResult()).intValue();
@@ -546,7 +545,7 @@ public class FileDaoImpl implements FileDao {
                 questionCriteria1 = session.createCriteria(Question.class);
                 questionCriteria1.add(Restrictions.eq("hardLevel", i));
                 categoryCriteria1 = questionCriteria1.createCriteria("categoryId");
-                answerCriteria1 = questionCriteria1.createCriteria("answer");
+                answerCriteria1 = questionCriteria1.createCriteria("answerId");
                 categoryCriteria1.add(Restrictions.eq("categoryName", technical));
                 questionCriteria1.setFirstResult(index).setMaxResults(5);
                 List a = questionCriteria1.list();

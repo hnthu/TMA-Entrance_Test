@@ -14,7 +14,7 @@ public class Kind {
     private int kindId;
     @Column(name = "kindName", nullable = false)
     private String kindName;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "kindId")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "kindId")
     @JsonIgnore
     private Set<Question> questions = new HashSet<Question>(
             0);
